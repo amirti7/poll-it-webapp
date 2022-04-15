@@ -1,7 +1,6 @@
 import "bootstrap/dist/css/bootstrap.css";
 import { Nav, Navbar } from "react-bootstrap";
-import logo from "../logo.svg";
-import PollItLogo from "../images/Logo.png";
+import PollItLogo from "../assets/images/Logo.png";
 
 const NavigationBar = (props) => {
   return (

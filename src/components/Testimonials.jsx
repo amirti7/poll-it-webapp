@@ -2,10 +2,10 @@ import Card from "react-bootstrap/Card";
 import Carousel from "react-bootstrap/Carousel";
 import styled from "styled-components";
 import { BsStarFill } from "react-icons/bs";
-import steve from "../images/steve.png";
-import bill from "../images/bill.png";
-import jeff from "../images/jeff.png";
-import adam from "../images/adam.png";
+import steve from "../assets/images/steve.png";
+import bill from "../assets/images/bill.png";
+import jeff from "../assets/images/jeff.png";
+import adam from "../assets/images/adam.png";
 
 const Title = styled.h1`
   text-align: center;

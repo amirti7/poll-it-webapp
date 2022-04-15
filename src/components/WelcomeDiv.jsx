@@ -4,7 +4,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import PollItLogo from "../images/Logo.png";
+import PollItLogo from "../assets/images/Logo.png";
 
 const Image = styled.img`
   @media (max-width: 767px) {
