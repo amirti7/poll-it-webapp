@@ -2,7 +2,7 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import styled from "styled-components";
 import NavigationBar from "../components/NavigationBar";
 import StickyFooter from "../components/StickyFooter";
-import PollItLogo from "../images/Logo.png";
+import PollItLogo from "../assets/images/Logo.png";
 
 const Input = styled.input`
   width: 300px;
