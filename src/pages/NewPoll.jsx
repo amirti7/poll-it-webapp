@@ -3,9 +3,9 @@ import NavigationBar from "../components/NavigationBar";
 import StickyFooter from "../components/StickyFooter";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
-import MultipleChoiceQuestion from "../components/MultipleChoiceQuestion";
-import ImageChoiceQuestion from "../components/ImageChoiceQuestion";
-import RangeQuestion from "../components/RangeQuestion";
+import MultipleChoice from "../components/Questions/MultipleChoice";
+import ImageChoice from "../components/Questions/ImageChoice";
+import Range from "../components/Questions/Range";
 import TextField from "@mui/material/TextField";
 
 const NewPoll = (props) => {
@@ -15,11 +15,11 @@ const NewPoll = (props) => {
   function componentToDisplay() {
     switch (questionToDisplay) {
       case "multiple":
-        return <MultipleChoiceQuestion />;
+        return <MultipleChoice />;
       case "image":
-        return <ImageChoiceQuestion />;
+        return <ImageChoice />;
       case "range":
-        return <RangeQuestion />;
+        return <Range />;
       default:
         return;
     }
