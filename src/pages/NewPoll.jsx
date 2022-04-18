@@ -12,18 +12,6 @@ const NewPoll = (props) => {
   const [pollName, setPollName] = useState("");
   const [questionToDisplay, setQuestionToDisplay] = useState("");
 
-  function componentToDisplay() {
-    switch (questionToDisplay) {
-      case "multiple":
-        return <MultipleChoice />;
-      case "image":
-        return <ImageChoice />;
-      case "range":
-        return <Range />;
-      default:
-        return;
-    }
-  }
   return (
     <div>
       <NavigationBar />
@@ -54,7 +42,9 @@ const NewPoll = (props) => {
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-        {componentToDisplay()}
+        {questionToDisplay === "multiple" && <MultipleChoice />}
+        {questionToDisplay === "image" && <ImageChoice />}
+        {questionToDisplay === "range" && <Range />}
         <button>Submit Question</button>
       </div>
 

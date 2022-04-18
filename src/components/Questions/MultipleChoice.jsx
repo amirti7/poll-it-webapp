@@ -3,42 +3,93 @@ import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 
 const MultipleChoice = (props) => {
-  const [questionName, setQuestionName] = useState("");
-  const [answers, setAnswers] = useState([""]);
-  const [answersCounter, setAnswersCounter] = useState("");
-  function setCreateAnswersInput(val) {
-    setAnswersCounter(val);
-  }
-  function addAnswerInput() {
-    var div = "";
-    for (var i = 0; i < parseInt(answersCounter); i++) {
-      div += "<AnswerInput />";
+  const [questions, setQuestions] = useState({
+    questionName: "",
+    answers: ["", ""],
+  });
+  const [enteredQuestionName, setEnteredQuestionName] = useState("");
+
+  const handleEnteredAnswers = (e, index) => {
+    if (
+      e.target.value === "" ||
+      (questions.answers[index] === e.target.value &&
+        questions.answers[questions.answers.length] === "")
+    )
+      return;
+    if (index === 0) {
+      setQuestions((prevState) => {
+        let updatedAnswers = [...prevState.answers];
+        updatedAnswers.splice(index, 1, e.target.value);
+        return {
+          questionName: prevState.questionName,
+          answers: updatedAnswers,
+        };
+      });
+      return;
     }
-    return div;
-  }
+    setQuestions((prevState) => {
+      let updatedAnswers = [...prevState.answers];
+      updatedAnswers.splice(index, 1, e.target.value, "");
+      return {
+        questionName: prevState.questionName,
+        answers: updatedAnswers,
+      };
+    });
+    return;
+  };
+
+  const handleRemoveAnswer = (index) => {
+    if (index < 2) return;
+    setQuestions((prevState) => {
+      let updatedAnswers = [...prevState.answers];
+      updatedAnswers.splice(index, 1);
+      return {
+        questionName: prevState.questionName,
+        answers: updatedAnswers,
+      };
+    });
+  };
+
+  const handleQuestionName = (e) => {
+    setEnteredQuestionName(e.target.value);
+    setQuestions((prevState) => {
+      return {
+        questionName: e.target.value,
+        answers: [...prevState.answers],
+      };
+    });
+  };
+
   return (
     <div>
-      <h4>Question Type: Multiple Choice Question</h4>
-      <label>Please enter your question here:</label>
-      <TextField
-        variant="filled"
-        value={questionName}
-        onChange={(e) => setQuestionName(e.target.value)}
-        label="Question"
-      />
+      <div>
+        <h4>Question Type: Multiple Choice Question</h4>
+        <label>Please enter your question here:</label>
+        <TextField
+          variant="filled"
+          value={enteredQuestionName}
+          onChange={(e) => handleQuestionName(e)}
+          label="Question"
+        />
+        <br />
+      </div>
+      {questions.answers.map((answer, index) => {
+        return (
+          <div>
+            <TextField
+              variant="filled"
+              label="Answer"
+              onBlur={(e) => handleEnteredAnswers(e, index)}
+            />
+            <input
+              type="button"
+              value="Remove"
+              onClick={() => handleRemoveAnswer(index)}
+            />
+          </div>
+        );
+      })}
       <br />
-      <TextField
-        variant="filled"
-        type="number"
-        helperText="Number of Answers"
-        onChange={(e) => setAnswersCounter(e.target.value)}
-      />
-
-      {[
-        ...Array(answersCounter).map((i) => {
-          <input key={i}></input>;
-        }),
-      ]}
     </div>
   );
 };
