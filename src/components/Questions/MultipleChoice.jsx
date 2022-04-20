@@ -10,12 +10,23 @@ const MultipleChoice = (props) => {
   const [enteredQuestionName, setEnteredQuestionName] = useState("");
 
   const handleEnteredAnswers = (e, index) => {
+    if (e.target.value === "") return;
+    if (questions.answers[index] === e.target.value) return;
     if (
-      e.target.value === "" ||
-      (questions.answers[index] === e.target.value &&
-        questions.answers[questions.answers.length] === "")
-    )
+      questions.answers[index] !== "" &&
+      questions.answers[index] !== e.target.value &&
+      questions.answers[questions.answers.length - 1] === ""
+    ) {
+      setQuestions((prevState) => {
+        let updatedAnswers = [...prevState.answers];
+        updatedAnswers.splice(index, 1, e.target.value);
+        return {
+          questionName: prevState.questionName,
+          answers: updatedAnswers,
+        };
+      });
       return;
+    }
     if (index === 0) {
       setQuestions((prevState) => {
         let updatedAnswers = [...prevState.answers];
@@ -27,6 +38,7 @@ const MultipleChoice = (props) => {
       });
       return;
     }
+
     setQuestions((prevState) => {
       let updatedAnswers = [...prevState.answers];
       updatedAnswers.splice(index, 1, e.target.value, "");
