@@ -3,6 +3,7 @@ import styled from "styled-components";
 import NavigationBar from "../components/NavigationBar";
 import StickyFooter from "../components/StickyFooter";
 import PollItLogo from "../assets/images/Logo.png";
+import { useState } from "react";
 
 const Input = styled.input`
   width: 300px;
@@ -32,6 +33,34 @@ const Title = styled.p`
   }
 `;
 const SignUp = (props) => {
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+
+  async function handleRegirstation(e) {
+    e.preventDefault();
+    const dataToServer = {
+      email: userEmail,
+      password: userPassword,
+      role: "Client",
+    };
+
+    const response = await fetch("http://localhost:8000/auth/register", {
+      method: "POST",
+      body: JSON.stringify(dataToServer),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response);
+  }
+
+  const handleEnteredEmail = (e) => {
+    setUserEmail(e.target.value);
+  };
+
+  const handleEnteredPassword = (e) => {
+    setUserPassword(e.target.value);
+  };
   return (
     <div>
       <NavigationBar></NavigationBar>
@@ -73,9 +102,19 @@ const SignUp = (props) => {
             </Col>
             <Col md={4}>
               <p>Email:</p>
-              <Input type="text" name="email" />
+              <Input
+                type="text"
+                name="email"
+                value={userEmail}
+                onChange={(e) => handleEnteredEmail(e)}
+              />
               <p>Password:</p>
-              <Input type="password" name="password" />
+              <Input
+                type="password"
+                name="password"
+                value={userPassword}
+                onChange={(e) => handleEnteredPassword(e)}
+              />
               <p>Confirm Password:</p>
               <Input type="password" name="passwordConfirm" />
               <br></br>
@@ -88,7 +127,12 @@ const SignUp = (props) => {
                 style={{ marginBottom: "50px" }}
               />
 
-              <Button type="submit" variant="dark" style={{ width: "300px" }}>
+              <Button
+                type="submit"
+                variant="dark"
+                onClick={(e) => handleRegirstation(e)}
+                style={{ width: "300px" }}
+              >
                 I'm Done!
               </Button>
               <br></br>

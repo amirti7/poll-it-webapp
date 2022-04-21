@@ -1,9 +1,9 @@
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import NavigationBar from "../components/NavigationBar";
 import StickyFooter from "../components/StickyFooter";
 import PollItLogo from "../assets/images/Logo.png";
+import { useState } from "react";
 
 const Input = styled.input`
   width: 300px;
@@ -35,6 +35,16 @@ const Title = styled.p`
   }
 `;
 const LoginPage = (props) => {
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+
+  const handleEnteredEmail = (e) => {
+    setUserEmail(e.target.value);
+  };
+
+  const handleEnteredPassword = (e) => {
+    setUserPassword(e.target.value);
+  };
   return (
     <div>
       <NavigationBar></NavigationBar>
@@ -53,9 +63,19 @@ const LoginPage = (props) => {
               Lets Start Our Experience Together!
             </p>
             <p>Email:</p>
-            <Input type="text" name="email" />
+            <Input
+              type="text"
+              name="email"
+              value={userEmail}
+              onBlur={(e) => handleEnteredEmail(e)}
+            />
             <p>Password:</p>
-            <Input type="password" name="password" />
+            <Input
+              type="password"
+              name="password"
+              value={userPassword}
+              onBlur={(e) => handleEnteredPassword(e)}
+            />
             <br></br>
             <Button variant="dark" style={{ width: "300px" }}>
               Login
