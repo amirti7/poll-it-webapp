@@ -18,6 +18,8 @@ const Range = (props) => {
       <input type="text" placeholder="Enter Range Start here:" />
       <br></br>
       <input type="text" placeholder="Enter Range End here:" />
+      <br />
+      <button>Submit Question</button>
     </div>
   );
 };

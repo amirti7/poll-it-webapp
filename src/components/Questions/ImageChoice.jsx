@@ -17,6 +17,8 @@ const ImageChoice = (props) => {
       <input type="text" placeholder="Enter image url here:" />
       <br></br>
       <input type="text" placeholder="Enter image url here:" />
+      <br />
+      <button>Submit Question</button>
     </div>
   );
 };
