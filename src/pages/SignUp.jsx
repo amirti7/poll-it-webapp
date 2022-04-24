@@ -36,22 +36,23 @@ const SignUp = (props) => {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
 
-  async function handleRegirstation(e) {
-    e.preventDefault();
+  async function handleRegirstation() {
     const dataToServer = {
       email: userEmail,
       password: userPassword,
       role: "Client",
     };
+    const json = JSON.stringify(dataToServer);
+    console.log(json);
 
-    const response = await fetch("http://localhost:8000/auth/register", {
+    const data = await fetch("http://10.10.248.124:8000/auth/register", {
       method: "POST",
-      body: JSON.stringify(dataToServer),
+      body: json,
       headers: {
         "Content-Type": "application/json",
       },
     });
-    console.log(response);
+    console.log(data);
   }
 
   const handleEnteredEmail = (e) => {
@@ -128,9 +129,8 @@ const SignUp = (props) => {
               />
 
               <Button
-                type="submit"
                 variant="dark"
-                onClick={(e) => handleRegirstation(e)}
+                onClick={handleRegirstation}
                 style={{ width: "300px" }}
               >
                 I'm Done!
