@@ -3,48 +3,53 @@ import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 
 const MultipleChoice = (props) => {
-  const [questions, setQuestions] = useState({
+  const [question, setQuestion] = useState({
     questionName: "",
     answers: ["", ""],
+    type: "multiple",
   });
   const [enteredQuestionName, setEnteredQuestionName] = useState("");
 
   const handleEnteredAnswers = (e, index) => {
-    if (e.target.value === "") return;
-    if (questions.answers[index] === e.target.value) return;
     if (
-      questions.answers[index] !== "" &&
-      questions.answers[index] !== e.target.value &&
-      questions.answers[questions.answers.length - 1] === ""
+      question.answers[index] !== "" &&
+      question.answers[index] !== e.target.value &&
+      question.answers[question.answers.length - 1] === ""
     ) {
-      setQuestions((prevState) => {
+      setQuestion((prevState) => {
         let updatedAnswers = [...prevState.answers];
         updatedAnswers.splice(index, 1, e.target.value);
         return {
           questionName: prevState.questionName,
           answers: updatedAnswers,
+          type: prevState.type,
         };
       });
       return;
     }
+    if (e.target.value === "") return;
+    if (question.answers[index] === e.target.value) return;
+
     if (index === 0) {
-      setQuestions((prevState) => {
+      setQuestion((prevState) => {
         let updatedAnswers = [...prevState.answers];
         updatedAnswers.splice(index, 1, e.target.value);
         return {
           questionName: prevState.questionName,
           answers: updatedAnswers,
+          type: prevState.type,
         };
       });
       return;
     }
 
-    setQuestions((prevState) => {
+    setQuestion((prevState) => {
       let updatedAnswers = [...prevState.answers];
       updatedAnswers.splice(index, 1, e.target.value, "");
       return {
         questionName: prevState.questionName,
         answers: updatedAnswers,
+        type: prevState.type,
       };
     });
     return;
@@ -52,24 +57,30 @@ const MultipleChoice = (props) => {
 
   const handleRemoveAnswer = (index) => {
     if (index < 2) return;
-    setQuestions((prevState) => {
+    setQuestion((prevState) => {
       let updatedAnswers = [...prevState.answers];
       updatedAnswers.splice(index, 1);
       return {
         questionName: prevState.questionName,
         answers: updatedAnswers,
+        type: prevState.type,
       };
     });
   };
 
   const handleQuestionName = (e) => {
     setEnteredQuestionName(e.target.value);
-    setQuestions((prevState) => {
+    setQuestion((prevState) => {
       return {
         questionName: e.target.value,
         answers: [...prevState.answers],
+        type: prevState.type,
       };
     });
+  };
+
+  const handleSubmitQuestion = () => {
+    props.onSubmitQuestion(question);
   };
 
   return (
@@ -85,7 +96,7 @@ const MultipleChoice = (props) => {
         />
         <br />
       </div>
-      {questions.answers.map((answer, index) => {
+      {question.answers.map((answer, index) => {
         return (
           <div>
             <TextField
@@ -102,6 +113,7 @@ const MultipleChoice = (props) => {
         );
       })}
       <br />
+      <button onClick={handleSubmitQuestion}>Submit Question</button>
     </div>
   );
 };
