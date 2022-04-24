@@ -88,11 +88,12 @@ const LoginPage = (props) => {
       localStorage.setItem("CheckedInUser", data.account.email);
       localStorage.setItem("UserAccessToken", data.accessToken);
       localStorage.setItem("UserRefreshToken", data.refreshToken);
-    } else
+    } else {
       setErrorInLogin({
         isOpen: true,
         errorMessage: data.error,
       });
+    }
   }
 
   const handleEnteredEmail = (e) => {
