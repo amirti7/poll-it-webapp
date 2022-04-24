@@ -8,10 +8,32 @@ const NavigationBar = (props) => {
   const user = localStorage.getItem("CheckedInUser");
   const [userCheckedOut, setUserCheckedOut] = useState(false);
 
-  const signOut = () => {
-    localStorage.removeItem("CheckedInUser");
-    setUserCheckedOut(true);
-  };
+  async function signOut() {
+    const dataToServer = {
+      refreshToken: localStorage.getItem("UserRefreshToken"),
+    };
+
+    const access = localStorage.getItem("UserAccessToken");
+
+    const json = JSON.stringify(dataToServer);
+    const response = await fetch("http://10.10.248.124:8000/auth/logout", {
+      method: "POST",
+      body: json,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + access,
+      },
+    });
+
+    const data = await response.json();
+    console.log(data);
+
+    // localStorage.removeItem("CheckedInUser");
+    // localStorage.removeItem("UserAccessToken");
+    // localStorage.removeItem("UserRefreshToken");
+
+    // setUserCheckedOut(true);
+  }
 
   const normal = (
     <>
