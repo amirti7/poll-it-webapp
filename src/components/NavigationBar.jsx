@@ -24,15 +24,58 @@ const NavigationBar = (props) => {
         Authorization: "Bearer " + access,
       },
     });
+    console.log(response + " first logout request")
+
+    if (response.ok) {
+      localStorage.removeItem("CheckedInUser");
+      localStorage.removeItem("UserAccessToken");
+      localStorage.removeItem("UserRefreshToken");
+
+      setUserCheckedOut(true);
+      return
+    }
 
     const data = await response.json();
-    console.log(data);
+    const rt = data.refreshToken
+    let newData
+    console.log(data + " data json")
 
-    // localStorage.removeItem("CheckedInUser");
-    // localStorage.removeItem("UserAccessToken");
-    // localStorage.removeItem("UserRefreshToken");
+    if (!response.ok) {
+      if (response.status == 403) {
+        const res = await fetch("http://10.10.248.124:8000/auth/refreshToken", {
+          method: "POST",
+          body: json,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + access,
+          },
+        });
+        console.log(res + " res")
+        newData = await res.json();
+      }
+    }
 
-    // setUserCheckedOut(true);
+    console.log(newData + " new data")
+
+    if (newData.ok) {
+      dataToServer.refreshToken = rt
+      const response = await fetch("http://10.10.248.124:8000/auth/logout", {
+        method: "POST",
+        body: dataToServer,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + newData.accessToken,
+        },
+      });
+      if (response.ok) {
+        localStorage.removeItem("CheckedInUser");
+        localStorage.removeItem("UserAccessToken");
+        localStorage.removeItem("UserRefreshToken");
+
+        setUserCheckedOut(true);
+      }
+    }
+
   }
 
   const normal = (
