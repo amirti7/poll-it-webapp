@@ -3,6 +3,7 @@ import styled from "styled-components";
 import NavigationBar from "../components/NavigationBar";
 import StickyFooter from "../components/StickyFooter";
 import PollItLogo from "../assets/images/Logo.png";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
@@ -61,6 +62,7 @@ const LoginPage = (props) => {
     isOpen: false,
     errorMessage: "",
   });
+  const navigate = useNavigate();
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -88,6 +90,8 @@ const LoginPage = (props) => {
       localStorage.setItem("CheckedInUser", data.account.email);
       localStorage.setItem("UserAccessToken", data.accessToken);
       localStorage.setItem("UserRefreshToken", data.refreshToken);
+      setUserEmail("")
+      setUserPassword("")
     } else {
       setErrorInLogin({
         isOpen: true,
@@ -115,6 +119,7 @@ const LoginPage = (props) => {
       isOpen: false,
       isLogin: true,
     });
+    navigate("/");
   };
   return (
     <div>
