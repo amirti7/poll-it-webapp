@@ -1,30 +1,50 @@
 import "bootstrap/dist/css/bootstrap.css";
-import { Nav, Navbar } from "react-bootstrap";
+import { Nav, Navbar , Button} from "react-bootstrap";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PollItLogo from "../assets/images/Logo.png";
 import { useState } from "react";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "600px",
+  heigth: "600px",
+  bgcolor: "#A9A9A9",
+  border: "2px solid #000",
+  borderRadius: ".8rem",
+  boxShadow: 24,
+};
 
 const NavigationBar = (props) => {
   const user = localStorage.getItem("CheckedInUser");
   const [userCheckedOut, setUserCheckedOut] = useState(false);
 
   async function signOut() {
+    let newData, resData
+
     const dataToServer = {
       refreshToken: localStorage.getItem("UserRefreshToken"),
     };
 
     const access = localStorage.getItem("UserAccessToken");
 
+    const auth = "Bearer " + access
+
     const json = JSON.stringify(dataToServer);
+
     const response = await fetch("http://10.10.248.124:8000/auth/logout", {
       method: "POST",
       body: json,
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + access,
+        Authorization: auth,
       },
     });
-    console.log(response + " first logout request")
 
     if (response.ok) {
       localStorage.removeItem("CheckedInUser");
@@ -32,13 +52,8 @@ const NavigationBar = (props) => {
       localStorage.removeItem("UserRefreshToken");
 
       setUserCheckedOut(true);
-      return
+      return;
     }
-
-    const data = await response.json();
-    const rt = data.refreshToken
-    let newData
-    console.log(data + " data json")
 
     if (!response.ok) {
       if (response.status == 403) {
@@ -47,21 +62,20 @@ const NavigationBar = (props) => {
           body: json,
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + access,
+            Authorization: auth,
           },
         });
-        console.log(res + " res")
+        resData = res
         newData = await res.json();
       }
     }
 
-    console.log(newData + " new data")
-
-    if (newData.ok) {
-      dataToServer.refreshToken = rt
+    if (resData.ok) {
+      dataToServer.refreshToken = newData.refreshToken
+      const newJson= JSON.stringify(dataToServer)
       const response = await fetch("http://10.10.248.124:8000/auth/logout", {
         method: "POST",
-        body: dataToServer,
+        body: newJson,
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + newData.accessToken,
@@ -75,7 +89,10 @@ const NavigationBar = (props) => {
         setUserCheckedOut(true);
       }
     }
+  }
 
+  function handleCloseModal() {
+    setUserCheckedOut(false);
   }
 
   const normal = (
@@ -92,7 +109,7 @@ const NavigationBar = (props) => {
   const userLoggedIn = (
     <>
       <Nav.Item className="ms-auto">
-        <Nav.Link href="">
+        <Nav.Link href="/userProfile">
           <AccountCircleIcon />
           {user}
         </Nav.Link>
@@ -111,6 +128,28 @@ const NavigationBar = (props) => {
       variant="dark"
       sticky="top"
     >
+      <Modal
+        open={userCheckedOut}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            LOGOUT
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            User loged out Successfully!
+          </Typography>
+          <Button
+            variant="dark"
+            style={{ width: "200px", marginLeft: "370px" }}
+            onClick={handleCloseModal}
+          >
+            Close
+          </Button>
+        </Box>
+      </Modal>
       <Navbar.Brand>
         <img src={PollItLogo} width="40px" height="40px"></img>
         Poll-It
