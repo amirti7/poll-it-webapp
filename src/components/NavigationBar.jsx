@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.css";
-import { Nav, Navbar , Button} from "react-bootstrap";
+import { Nav, Navbar, Button } from "react-bootstrap";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PollItLogo from "../assets/images/Logo.png";
 import { useState } from "react";
@@ -25,7 +25,7 @@ const NavigationBar = (props) => {
   const [userCheckedOut, setUserCheckedOut] = useState(false);
 
   async function signOut() {
-    let newData, resData
+    let newData, resData;
 
     const dataToServer = {
       refreshToken: localStorage.getItem("UserRefreshToken"),
@@ -33,7 +33,7 @@ const NavigationBar = (props) => {
 
     const access = localStorage.getItem("UserAccessToken");
 
-    const auth = "Bearer " + access
+    const auth = "Bearer " + access;
 
     const json = JSON.stringify(dataToServer);
 
@@ -66,14 +66,14 @@ const NavigationBar = (props) => {
             Authorization: auth,
           },
         });
-        resData = res
+        resData = res;
         newData = await res.json();
       }
     }
 
     if (resData.ok) {
-      dataToServer.refreshToken = newData.refreshToken
-      const newJson= JSON.stringify(dataToServer)
+      dataToServer.refreshToken = newData.refreshToken;
+      const newJson = JSON.stringify(dataToServer);
       const response = await fetch("http://10.10.248.124:8000/auth/logout", {
         method: "POST",
         body: newJson,
@@ -160,7 +160,7 @@ const NavigationBar = (props) => {
         <Nav.Item>
           <Nav.Link href="/">Home</Nav.Link>
         </Nav.Item>
-        <Nav.Item>
+         <Nav.Item>
           <Nav.Link href="/about_us">Polls</Nav.Link>
         </Nav.Item>
         <Nav.Item>

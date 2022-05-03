@@ -31,7 +31,7 @@ const Title = styled.p`
 `;
 
 
-const UserProfile = (props) => {
+const UserProfile = async (props) => {
   const userID = localStorage.getItem("UserID");
   const UserAccessToken = localStorage.getItem("UserAccessToken")
   const json = JSON.stringify(userID)

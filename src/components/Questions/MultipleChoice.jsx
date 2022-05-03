@@ -6,7 +6,7 @@ const MultipleChoice = (props) => {
   const [question, setQuestion] = useState({
     questionName: "",
     answers: ["", ""],
-    type: "multiple",
+    type: "Multi Choice",
   });
   const [enteredQuestionName, setEnteredQuestionName] = useState("");
 
