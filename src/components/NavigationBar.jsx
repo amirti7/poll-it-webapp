@@ -50,6 +50,7 @@ const NavigationBar = (props) => {
       localStorage.removeItem("CheckedInUser");
       localStorage.removeItem("UserAccessToken");
       localStorage.removeItem("UserRefreshToken");
+      localStorage.removeItem("UserID");
 
       setUserCheckedOut(true);
       return;
@@ -85,6 +86,7 @@ const NavigationBar = (props) => {
         localStorage.removeItem("CheckedInUser");
         localStorage.removeItem("UserAccessToken");
         localStorage.removeItem("UserRefreshToken");
+        localStorage.removeItem("UserID");
 
         setUserCheckedOut(true);
       }
@@ -163,6 +165,9 @@ const NavigationBar = (props) => {
         </Nav.Item>
         <Nav.Item>
           <Nav.Link href="/contact_us">New Poll</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="/userProfile">My Profile</Nav.Link>
         </Nav.Item>
         {user ? userLoggedIn : normal}
       </Nav>

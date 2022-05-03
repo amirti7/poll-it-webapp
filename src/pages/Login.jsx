@@ -90,6 +90,7 @@ const LoginPage = (props) => {
       localStorage.setItem("CheckedInUser", data.account.email);
       localStorage.setItem("UserAccessToken", data.accessToken);
       localStorage.setItem("UserRefreshToken", data.refreshToken);
+      localStorage.setItem("UserID", data.account.id);
       setUserEmail("")
       setUserPassword("")
     } else {
