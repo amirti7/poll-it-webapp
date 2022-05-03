@@ -90,8 +90,8 @@ const LoginPage = (props) => {
       localStorage.setItem("CheckedInUser", data.account.email);
       localStorage.setItem("UserAccessToken", data.accessToken);
       localStorage.setItem("UserRefreshToken", data.refreshToken);
-      setUserEmail("")
-      setUserPassword("")
+      setUserEmail("");
+      setUserPassword("");
     } else {
       setErrorInLogin({
         isOpen: true,
@@ -196,6 +196,7 @@ const LoginPage = (props) => {
               value={userPassword}
               onChange={(e) => handleEnteredPassword(e)}
             />
+
             <br></br>
             <Button
               variant="dark"
