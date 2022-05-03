@@ -3,7 +3,7 @@ import NavigationBar from "../components/NavigationBar";
 import StickyFooter from "../components/StickyFooter";
 import PollItLogo from "../assets/images/Logo.png";
 import styled from "styled-components";
-
+import { Input } from "@mui/material";
 
 const Image = styled.img`
   @media (min-width: 100px) {
@@ -30,90 +30,95 @@ const Title = styled.p`
   }
 `;
 
+const UserProfile = (props) => {
+  async function handleUpdateUser() {
+    const userID = localStorage.getItem("UserId");
+    const UserAccessToken = localStorage.getItem("UserAccessToken");
+    const auth = "Bearer " + UserAccessToken;
 
-const UserProfile = async (props) => {
-  const userID = localStorage.getItem("UserID");
-  const UserAccessToken = localStorage.getItem("UserAccessToken")
-  const json = JSON.stringify(userID)
-
-  const response = await fetch("http://10.10.248.124:8000/details/getDetailsByAccount/"+json, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " +UserAccessToken
-      },
-    });
+    const response = await fetch(
+      "http://10.10.248.124:8000/details/getDetailsByAccount/" + userID,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: auth,
+        },
+      }
+    );
+    const data = await response.json();
+  }
 
   return (
     <div>
-        <NavigationBar></NavigationBar>
-        <Container>
-          <div>
+      <NavigationBar></NavigationBar>
+      <Container>
+        <div>
           <Row md={6}>
-          <Col md={6}>
-            <Image src={PollItLogo}></Image>
-          </Col>
-          <Col md={6}>
-          <Title>My Profile</Title>
-           
-            <p
-              style={{
-                fontSize: "20px",
-              }}
-            >
-              full name:
-            </p>
-            <p></p>
+            <Col md={6}>
+              <Image src={PollItLogo}></Image>
+            </Col>
+            <Col md={6}>
+              <div>
+                <Title>My Profile</Title>
 
-            <p
-              style={{
-                fontSize: "20px",
-              }}
-            >
-              address:
-            </p>
-            <p>user address</p>
-            
-            <p
-              style={{
-                fontSize: "20px",
-              }}
-            >
-              date of birth:
-            </p>
-            <p>user date of birth</p>
+                <p
+                  style={{
+                    fontSize: "20px",
+                  }}
+                >
+                  full name:
+                </p>
+                <Input disabled={true}></Input>
+              </div>
+              <p
+                style={{
+                  fontSize: "20px",
+                }}
+              >
+                address:
+              </p>
+              <p>user address</p>
 
-            <p
-              style={{
-                fontSize: "20px",
-              }}
-            >
-              email:
-            </p>
-            <p>userEmail@gmail.com</p>
+              <p
+                style={{
+                  fontSize: "20px",
+                }}
+              >
+                date of birth:
+              </p>
+              <p>user date of birth</p>
 
-            <p
-              style={{
-                fontSize: "20px",
-              }}
-            >
-              company name:
-            </p>
-            <p>company name</p>
+              <p
+                style={{
+                  fontSize: "20px",
+                }}
+              >
+                email:
+              </p>
+              <p>userEmail@gmail.com</p>
 
+              <p
+                style={{
+                  fontSize: "20px",
+                }}
+              >
+                company name:
+              </p>
+              <p>company name</p>
 
-            <Button
-              variant="dark"
-              style={{ width: "300px" }}
-              //onClick={(e) => handleLogin(e)}
-            >
-              edit profile
-            </Button>
-          </Col>
+              <Button
+                variant="dark"
+                style={{ width: "300px" }}
+                onClick={(e) => handleUpdateUser(e)}
+              >
+                edit profile
+              </Button>
+            </Col>
           </Row>
-          </div>
-        </Container>
-        <StickyFooter></StickyFooter>
+        </div>
+      </Container>
+      <StickyFooter></StickyFooter>
     </div>
   );
 };

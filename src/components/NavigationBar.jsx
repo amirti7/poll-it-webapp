@@ -50,7 +50,7 @@ const NavigationBar = (props) => {
       localStorage.removeItem("CheckedInUser");
       localStorage.removeItem("UserAccessToken");
       localStorage.removeItem("UserRefreshToken");
-      localStorage.removeItem("UserID");
+      localStorage.removeItem("UserId");
 
       setUserCheckedOut(true);
       return;
@@ -86,7 +86,7 @@ const NavigationBar = (props) => {
         localStorage.removeItem("CheckedInUser");
         localStorage.removeItem("UserAccessToken");
         localStorage.removeItem("UserRefreshToken");
-        localStorage.removeItem("UserID");
+        localStorage.removeItem("UserId");
 
         setUserCheckedOut(true);
       }
@@ -110,6 +110,15 @@ const NavigationBar = (props) => {
 
   const userLoggedIn = (
     <>
+      <Nav.Item>
+        <Nav.Link href="/about_us">Polls</Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link href="/contact_us">New Poll</Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link href="/userProfile">My Profile</Nav.Link>
+      </Nav.Item>
       <Nav.Item className="ms-auto">
         <Nav.Link href="/userProfile">
           <AccountCircleIcon />
@@ -123,6 +132,7 @@ const NavigationBar = (props) => {
       </Nav.Item>
     </>
   );
+
   return (
     <Navbar
       style={{ marginBottom: "50px" }}
@@ -159,15 +169,6 @@ const NavigationBar = (props) => {
       <Nav className="container-fluid">
         <Nav.Item>
           <Nav.Link href="/">Home</Nav.Link>
-        </Nav.Item>
-         <Nav.Item>
-          <Nav.Link href="/about_us">Polls</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link href="/contact_us">New Poll</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link href="/userProfile">My Profile</Nav.Link>
         </Nav.Item>
         {user ? userLoggedIn : normal}
       </Nav>

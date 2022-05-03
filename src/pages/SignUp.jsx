@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Dropdown from "react-bootstrap/Dropdown";
 
 const Input = styled.input`
   width: 300px;
@@ -51,6 +52,8 @@ const style = {
 const SignUp = (props) => {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userAddress, setUserAddress] = useState("");
   const navigate = useNavigate();
 
   const [isSignedUp, setIsSignedUp] = useState({
@@ -67,6 +70,8 @@ const SignUp = (props) => {
       email: userEmail,
       password: userPassword,
       role: "Client",
+      name: userName,
+      address: userAddress,
     };
     const json = JSON.stringify(dataToServer);
     console.log(json);
@@ -100,6 +105,14 @@ const SignUp = (props) => {
 
   const handleEnteredPassword = (e) => {
     setUserPassword(e.target.value);
+  };
+
+  const handleEnteredName = (e) => {
+    setUserName(e.target.value);
+  };
+
+  const handleEnteredAddress = (e) => {
+    setUserAddress(e.target.value);
   };
 
   const handleCloseErrorModal = () => {
@@ -192,9 +205,19 @@ const SignUp = (props) => {
           <Row md={6}>
             <Col md={4}>
               <p>Full Name:</p>
-              <Input type="text" name="name" />
+              <Input
+                type="text"
+                name="name"
+                value={userName}
+                onChange={(e) => handleEnteredName(e)}
+              />
               <p>Address:</p>
-              <Input type="text" name="address" />
+              <Input
+                type="text"
+                name="address"
+                value={userAddress}
+                onChange={(e) => handleEnteredAddress(e)}
+              />
               <p>Date Of Birth:</p>
               <Input type="date" name="dob" />
               <br></br>
@@ -219,12 +242,19 @@ const SignUp = (props) => {
               <br></br>
             </Col>
             <Col md={4}>
-              <p>Company Name:</p>
-              <Input
-                type="text"
-                name="comapny"
-                style={{ marginBottom: "50px" }}
-              />
+              <Dropdown>
+                <Dropdown.Toggle
+                  style={{ width: "300px", marginBottom: "10px" }}
+                  id="dropdown-basic"
+                >
+                  Gender:
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item>Male</Dropdown.Item>
+                  <Dropdown.Item>Female</Dropdown.Item>
+                  <Dropdown.Item>Don't Wish To Specify</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
 
               <Button
                 variant="dark"
