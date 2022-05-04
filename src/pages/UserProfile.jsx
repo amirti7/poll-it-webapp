@@ -4,6 +4,7 @@ import StickyFooter from "../components/StickyFooter";
 import PollItLogo from "../assets/images/Logo.png";
 import styled from "styled-components";
 import { Input } from "@mui/material";
+import { useEffect, useState } from "react";
 
 const Image = styled.img`
   @media (min-width: 100px) {
@@ -31,13 +32,45 @@ const Title = styled.p`
 `;
 
 const UserProfile = (props) => {
-  async function handleUpdateUser() {
-    const userID = localStorage.getItem("UserId");
-    const UserAccessToken = localStorage.getItem("UserAccessToken");
-    const auth = "Bearer " + UserAccessToken;
+  const [userEmail, setUserEmail] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userAdress, setUserAdress] = useState("");
+  const [userDOB, setUserDOB] = useState("");
+  const [disableEdit, setDisableEdit] = useState(false);
+  const userID = localStorage.getItem("UserId");
+  const UserAccessToken = localStorage.getItem("UserAccessToken");
+  const auth = "Bearer " + UserAccessToken;
+  let data;
 
-    const response = await fetch(
-      "http://10.10.248.124:8000/details/getDetailsByAccount/" + userID,
+  useEffect(() => {
+    async function getDetails() {
+      const details = await fetchUserDetails();
+    }
+    getDetails();
+  }, []);
+  async function handleUpdateUser() {
+    const body = {
+      _id: userID,
+      name: userName,
+      address: userAdress,
+      email: userEmail,
+    };
+    console.log(body);
+    const response = await fetch("http://10.10.248.124:8000/auth/update/", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: auth,
+      },
+    });
+    const data = await response.json();
+    console.log(data);
+  }
+
+  async function fetchUserDetails() {
+    const data = await fetch(
+      "http://10.10.248.124:8000/auth/getAccountById/" + userID,
       {
         method: "GET",
         headers: {
@@ -46,7 +79,16 @@ const UserProfile = (props) => {
         },
       }
     );
-    const data = await response.json();
+    const details = await data.json();
+    console.log(details);
+
+    handleSetStates(details.email, details.name, details.address);
+    return details;
+  }
+  function handleSetStates(email, UserName, address) {
+    setUserAdress(address);
+    setUserEmail(email);
+    setUserName(UserName);
   }
 
   return (
@@ -59,61 +101,92 @@ const UserProfile = (props) => {
               <Image src={PollItLogo}></Image>
             </Col>
             <Col md={6}>
-              <div>
-                <Title>My Profile</Title>
-
-                <p
+              <Title>My Profile</Title>
+              <Col style={{ margin: "10px" }}>
+                <label
                   style={{
                     fontSize: "20px",
+                    marginRight: "10px",
                   }}
                 >
-                  full name:
-                </p>
-                <Input disabled={true}></Input>
-              </div>
-              <p
-                style={{
-                  fontSize: "20px",
-                }}
-              >
-                address:
-              </p>
-              <p>user address</p>
-
-              <p
-                style={{
-                  fontSize: "20px",
-                }}
-              >
-                date of birth:
-              </p>
-              <p>user date of birth</p>
-
-              <p
-                style={{
-                  fontSize: "20px",
-                }}
-              >
-                email:
-              </p>
-              <p>userEmail@gmail.com</p>
-
-              <p
-                style={{
-                  fontSize: "20px",
-                }}
-              >
-                company name:
-              </p>
-              <p>company name</p>
-
+                  Full Name:
+                </label>
+                <Input
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  disabled={!disableEdit}
+                ></Input>
+              </Col>
+              <Col style={{ margin: "10px" }}>
+                <label
+                  style={{
+                    fontSize: "20px",
+                    marginRight: "10px",
+                  }}
+                >
+                  Adress:
+                </label>
+                <Input
+                  value={userAdress}
+                  onChange={(e) => setUserAdress(e.target.value)}
+                  disabled={!disableEdit}
+                ></Input>
+              </Col>
+              <Col style={{ margin: "10px" }}>
+                <label
+                  style={{
+                    fontSize: "20px",
+                    marginRight: "10px",
+                  }}
+                >
+                  Date Of Birth:
+                </label>
+                <Input disabled={!disableEdit}></Input>
+              </Col>
+              <Col style={{ margin: "10px" }}>
+                <label
+                  style={{
+                    fontSize: "20px",
+                    marginRight: "10px",
+                  }}
+                >
+                  Email:
+                </label>
+                <Input
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  disabled={!disableEdit}
+                ></Input>
+              </Col>
+              <Col style={{ margin: "10px" }}>
+                <label
+                  style={{
+                    fontSize: "20px",
+                    marginRight: "10px",
+                  }}
+                >
+                  Password:
+                </label>
+                <Input disabled={!disableEdit}></Input>
+              </Col>
               <Button
+                disabled={!!disableEdit}
                 variant="dark"
                 style={{ width: "300px" }}
-                onClick={(e) => handleUpdateUser(e)}
+                onClick={() => setDisableEdit(!disableEdit)}
               >
-                edit profile
+                Edit Details
               </Button>
+              {disableEdit && (
+                <div>
+                  <Button onClick={() => handleUpdateUser()}>
+                    save changes
+                  </Button>
+                  <Button onClick={() => setDisableEdit(!disableEdit)}>
+                    Cancel
+                  </Button>
+                </div>
+              )}
             </Col>
           </Row>
         </div>
