@@ -35,7 +35,6 @@ const UserProfile = (props) => {
   const [userEmail, setUserEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [userAdress, setUserAdress] = useState("");
-  const [userDOB, setUserDOB] = useState("");
   const [disableEdit, setDisableEdit] = useState(false);
   const userID = localStorage.getItem("UserId");
   const UserAccessToken = localStorage.getItem("UserAccessToken");
@@ -139,17 +138,6 @@ const UserProfile = (props) => {
                     marginRight: "10px",
                   }}
                 >
-                  Date Of Birth:
-                </label>
-                <Input disabled={!disableEdit}></Input>
-              </Col>
-              <Col style={{ margin: "10px" }}>
-                <label
-                  style={{
-                    fontSize: "20px",
-                    marginRight: "10px",
-                  }}
-                >
                   Email:
                 </label>
                 <Input
@@ -157,17 +145,6 @@ const UserProfile = (props) => {
                   onChange={(e) => setUserEmail(e.target.value)}
                   disabled={!disableEdit}
                 ></Input>
-              </Col>
-              <Col style={{ margin: "10px" }}>
-                <label
-                  style={{
-                    fontSize: "20px",
-                    marginRight: "10px",
-                  }}
-                >
-                  Password:
-                </label>
-                <Input disabled={!disableEdit}></Input>
               </Col>
               <Button
                 disabled={!!disableEdit}
@@ -178,14 +155,22 @@ const UserProfile = (props) => {
                 Edit Details
               </Button>
               {disableEdit && (
-                <div>
-                  <Button onClick={() => handleUpdateUser()}>
+                <Col>
+                  <Button
+                    variant="dark"
+                    style={{ width: "150px" }}
+                    onClick={() => handleUpdateUser()}
+                  >
                     save changes
                   </Button>
-                  <Button onClick={() => setDisableEdit(!disableEdit)}>
+                  <Button
+                    variant="dark"
+                    style={{ width: "140px", marginLeft: "10px" }}
+                    onClick={() => setDisableEdit(!disableEdit)}
+                  >
                     Cancel
                   </Button>
-                </div>
+                </Col>
               )}
             </Col>
           </Row>

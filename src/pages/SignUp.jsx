@@ -66,6 +66,13 @@ const SignUp = (props) => {
   });
 
   async function handleRegirstation() {
+    if (userAddress.trim() === "" || userName.trim() === "") {
+      setErrorInSignUp({
+        isOpen: true,
+        errorMessage: "Not all The Fields are Filled , Please Fill all Fields!",
+      });
+      return;
+    }
     const dataToServer = {
       email: userEmail,
       password: userPassword,
@@ -164,7 +171,7 @@ const SignUp = (props) => {
             Welcome
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            User is Signed Up Successfully!
+            User Signed Up Successfully!
           </Typography>
           <Button
             variant="dark"
@@ -218,11 +225,6 @@ const SignUp = (props) => {
                 value={userAddress}
                 onChange={(e) => handleEnteredAddress(e)}
               />
-              <p>Date Of Birth:</p>
-              <Input type="date" name="dob" />
-              <br></br>
-            </Col>
-            <Col md={4}>
               <p>Email:</p>
               <Input
                 type="text"
@@ -230,6 +232,8 @@ const SignUp = (props) => {
                 value={userEmail}
                 onChange={(e) => handleEnteredEmail(e)}
               />
+            </Col>
+            <Col md={4}>
               <p>Password:</p>
               <Input
                 type="password"
@@ -237,25 +241,8 @@ const SignUp = (props) => {
                 value={userPassword}
                 onChange={(e) => handleEnteredPassword(e)}
               />
-              <p>Confirm Password:</p>
-              <Input type="password" name="passwordConfirm" />
               <br></br>
-            </Col>
-            <Col md={4}>
-              <Dropdown>
-                <Dropdown.Toggle
-                  style={{ width: "300px", marginBottom: "10px" }}
-                  id="dropdown-basic"
-                >
-                  Gender:
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item>Male</Dropdown.Item>
-                  <Dropdown.Item>Female</Dropdown.Item>
-                  <Dropdown.Item>Don't Wish To Specify</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-
+              <p>Press Here To Sign Up:</p>
               <Button
                 variant="dark"
                 onClick={handleRegirstation}
@@ -263,7 +250,6 @@ const SignUp = (props) => {
               >
                 I'm Done!
               </Button>
-              <br></br>
             </Col>
           </Row>
           <Row style={{ marginTop: "50px" }}>
