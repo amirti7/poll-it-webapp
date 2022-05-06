@@ -15,6 +15,7 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 import SignUp from "./pages/SignUp";
 import NewPoll from "./pages/NewPoll";
 import UserProfile from "./pages/UserProfile";
+import PrePoll from "./pages/PrePoll";
 
 // get data from firestore
 initializeApp(config.firebaseConfig);
@@ -36,7 +37,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/contact_us" element={<NewPoll />} />
           <Route path="/userProfile" element={<UserProfile />} />
-
+          <Route path="/prePoll" element={<PrePoll />} />
         </Routes>
       </BrowserRouter>
     </div>

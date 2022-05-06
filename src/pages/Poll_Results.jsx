@@ -30,19 +30,22 @@
 //   color: "white",
 // };
 
-// // interface Question {
-// //   choices: string[];
-// //   poll_question: string;
-// //   poll_question_id: string;
-// // }
-
-// // interface Answer {
-// //   answer: string;
-// //   poll_question_id: string;}
-
 // const AboutUs = (props) => {
-//   const [questions, setQuestions] = useState < Question > [];
-//   const [answers, setAnswers] = useState < Answer > [];
+//   const [questions, setQuestions] =
+//     useState[
+//       {
+//         choices: [],
+//         poll_question: "",
+//         poll_question_id: "",
+//       }
+//     ];
+//   const [answers, setAnswers] =
+//     useState[
+//       {
+//         answer: "",
+//         poll_question_id: "",
+//       }
+//     ];
 
 //   const db = getFirestore();
 

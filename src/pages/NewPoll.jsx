@@ -66,6 +66,7 @@ const NewPoll = (props) => {
 
     const dataToServer = {
       pollName: pollName,
+      accountId: localStorage.getItem("UserId")
     };
 
     const accessToken = localStorage.getItem("UserAccessToken");
