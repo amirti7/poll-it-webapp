@@ -7,6 +7,7 @@ import ImageChoice from "../components/Questions/ImageChoice";
 import Range from "../components/Questions/Range";
 import TextField from "@mui/material/TextField";
 import { Button } from "react-bootstrap";
+import ImageAnswers from "../components/Questions/ImageAnswers";
 
 const NewPoll = (props) => {
   const [pollName, setPollName] = useState("");
@@ -145,6 +146,9 @@ const NewPoll = (props) => {
             <Dropdown.Item onClick={() => setQuestionToDisplay("image")}>
               Image Question
             </Dropdown.Item>
+            <Dropdown.Item onClick={() => setQuestionToDisplay("ImageAnswers")}>
+              Image Answers
+            </Dropdown.Item>
             <Dropdown.Item onClick={() => setQuestionToDisplay("range")}>
               Select a value from Range
             </Dropdown.Item>
@@ -157,6 +161,9 @@ const NewPoll = (props) => {
           <ImageChoice onSubmitQuestion={handleFinishedQuestions} />
         )}
         {questionToDisplay === "range" && <Range />}
+        {questionToDisplay === "ImageAnswers" && (
+          <ImageAnswers onSubmitQuestion={handleFinishedQuestions} />
+        )}
       </div>
       <Button onClick={handleSubmitPoll}>Submit Poll</Button>
       <StickyFooter />
