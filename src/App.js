@@ -35,7 +35,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           {/* <Route path="/about_us" element={<AboutUs />} /> */}
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/contact_us" element={<NewPoll />} />
+          <Route path="/newPoll" element={<NewPoll />} />
           <Route path="/userProfile" element={<UserProfile />} />
           <Route path="/prePoll" element={<PrePoll />} />
         </Routes>

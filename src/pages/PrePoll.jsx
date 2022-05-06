@@ -85,17 +85,43 @@ const maritalStatusData = [
   { label: "Divorced", value: "Divorced" },
   { label: "Separated", value: "Separated" },
 ];
+const numOfKidsData = [
+  { label: "0", value: "0" },
+  { label: "1", value: "1" },
+  { label: "2", value: "2" },
+  { label: "3", value: "3" },
+  { label: "4", value: "4" },
+  { label: "5", value: "5" },
+  { label: "More than 5", value: "More than 5" },
+];
+
+const incomeData = [
+  { label: "0-5,000", value: "0-5,000" },
+  { label: "5,000-10,000", value: "5,000-10,000" },
+  { label: "10,000-20,000", value: "10,000-20,000" },
+  { label: "20,000-30,000", value: "20,000-30,000" },
+  { label: "More than 30,000", value: "More than 30,000" },
+];
+
+const permanentJobData = [
+  { label: "Yes", value: "Yes" },
+  { label: "No", value: "No" },
+];
 const PrePoll = (props) => {
   const [educationLevel, setEducationLevel] = useState([]);
   const [gender, setGender] = useState([]);
   const [ageRange, setAgeRange] = useState([]);
   const [maritalStatus, setMaritalStatus] = useState([]);
-  const [userEmail, setUserEmail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userAddress, setUserAddress] = useState("");
+  const [numOfKids, setNumOfKids] = useState([]);
+  const [income, setIncome] = useState([]);
+  const [permanentJob, setPermanentJob] = useState([]);
+  const [pollName, setPollName] = useState("");
   const navigate = useNavigate();
+  const userID = localStorage.getItem("UserId");
 
+  const accessToken = localStorage.getItem("UserAccessToken");
+
+  const auth = "Bearer " + accessToken;
   const [isSignedUp, setIsSignedUp] = useState({
     isOpen: false,
     isSignedUp: false,
@@ -105,8 +131,17 @@ const PrePoll = (props) => {
     errorMessage: "",
   });
 
-  async function handleRegirstation() {
-    if (userAddress.trim() === "" || userName.trim() === "") {
+  async function handlePrePollRegister() {
+    if (
+      educationLevel.length === 0 ||
+      gender.length === 0 ||
+      ageRange.length === 0 ||
+      maritalStatus.length === 0 ||
+      numOfKids.length === 0 ||
+      income.length === 0 ||
+      permanentJob.length === 0 ||
+      pollName.trim() === ""
+    ) {
       setErrorInSignUp({
         isOpen: true,
         errorMessage: "Not all The Fields are Filled , Please Fill all Fields!",
@@ -114,20 +149,24 @@ const PrePoll = (props) => {
       return;
     }
     const dataToServer = {
-      email: userEmail,
-      password: userPassword,
-      role: "Client",
-      name: userName,
-      address: userAddress,
+      pollName: pollName,
+      accountId: userID,
+      gender: gender.map((item) => item.value),
+      educationLevel: educationLevel.map((item) => item.value),
+      maritalStatus: maritalStatus.map((item) => item.value),
+      numberOfChildrens: numOfKids.map((item) => item.value),
+      permanentJob: permanentJob.map((item) => item.value),
+      income: income.map((item) => item.value),
     };
     const json = JSON.stringify(dataToServer);
     console.log(json);
 
-    const data = await fetch("http://10.10.248.124:8000/auth/register", {
+    const data = await fetch("http://10.10.248.124:8000/poll/create", {
       method: "POST",
       body: json,
       headers: {
         "Content-Type": "application/json",
+        Authorization: auth,
       },
     });
     console.log(data);
@@ -146,22 +185,6 @@ const PrePoll = (props) => {
     }
   }
 
-  const handleEnteredEmail = (e) => {
-    setUserEmail(e.target.value);
-  };
-
-  const handleEnteredPassword = (e) => {
-    setUserPassword(e.target.value);
-  };
-
-  const handleEnteredName = (e) => {
-    setUserName(e.target.value);
-  };
-
-  const handleEnteredAddress = (e) => {
-    setUserAddress(e.target.value);
-  };
-
   const handleCloseErrorModal = () => {
     setErrorInSignUp({
       isOpen: false,
@@ -174,7 +197,7 @@ const PrePoll = (props) => {
       isOpen: false,
       isSignedUp: true,
     });
-    navigate("/login");
+    navigate("/NewPoll");
   };
   return (
     <div>
@@ -271,14 +294,40 @@ const PrePoll = (props) => {
                 value={maritalStatus}
                 onChange={setMaritalStatus}
               />
-              <br></br>
-              <p>Press Here To Sign Up:</p>
+              <p>select your survey participants number of childrens :</p>
+              <MultiSelect
+                options={numOfKidsData}
+                value={numOfKids}
+                onChange={setNumOfKids}
+              />
+              <p>select your survey participants income :</p>
+              <MultiSelect
+                options={incomeData}
+                value={income}
+                onChange={setIncome}
+              />
+            </Col>
+            <Col md={4}>
+              <p>Does youur survey participants has a permanent job ?</p>
+              <MultiSelect
+                options={permanentJobData}
+                value={permanentJob}
+                onChange={setPermanentJob}
+              />
+              <p>Please Enter Your Poll Name:</p>
+              <Input
+                type="text"
+                name="name"
+                value={pollName}
+                onChange={(e) => setPollName(e.target.value)}
+              />
+              <p>Press Here To Continue to set your Poll Questions:</p>
               <Button
                 variant="dark"
-                onClick={handleRegirstation}
+                onClick={handlePrePollRegister}
                 style={{ width: "300px" }}
               >
-                I'm Done!
+                Continue
               </Button>
             </Col>
           </Row>

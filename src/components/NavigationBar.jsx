@@ -114,7 +114,7 @@ const NavigationBar = (props) => {
         <Nav.Link href="/about_us">Polls</Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link href="/contact_us">New Poll</Nav.Link>
+        <Nav.Link href="/newPoll">New Poll</Nav.Link>
       </Nav.Item>
       <Nav.Item>
         <Nav.Link href="/userProfile">My Profile</Nav.Link>
