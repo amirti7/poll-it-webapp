@@ -51,6 +51,7 @@ const NavigationBar = (props) => {
       localStorage.removeItem("UserAccessToken");
       localStorage.removeItem("UserRefreshToken");
       localStorage.removeItem("UserId");
+      localStorage.removeItem("ActivePollId");
 
       setUserCheckedOut(true);
       return;
@@ -87,6 +88,7 @@ const NavigationBar = (props) => {
         localStorage.removeItem("UserAccessToken");
         localStorage.removeItem("UserRefreshToken");
         localStorage.removeItem("UserId");
+        localStorage.removeItem("ActivePollId");
 
         setUserCheckedOut(true);
       }
@@ -114,10 +116,7 @@ const NavigationBar = (props) => {
         <Nav.Link href="/about_us">Polls</Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link href="/newPoll">New Poll</Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link href="/userProfile">My Profile</Nav.Link>
+        <Nav.Link href="/PrePoll">New Poll</Nav.Link>
       </Nav.Item>
       <Nav.Item className="ms-auto">
         <Nav.Link href="/userProfile">

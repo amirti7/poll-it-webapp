@@ -20,6 +20,15 @@ import PrePoll from "./pages/PrePoll";
 // get data from firestore
 initializeApp(config.firebaseConfig);
 
+const AuthenticatedComponent = ({ children }) => {
+  const tokenFromCookies = localStorage.getItem("UserAccessToken");
+  if (tokenFromCookies) {
+    console.log(children);
+    return children;
+  }
+  return <LoginPage />;
+};
+
 function App() {
   return (
     <div className="App">
@@ -35,9 +44,22 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           {/* <Route path="/about_us" element={<AboutUs />} /> */}
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/newPoll" element={<NewPoll />} />
-          <Route path="/userProfile" element={<UserProfile />} />
-          <Route path="/prePoll" element={<PrePoll />} />
+          <Route
+            path="/prePoll"
+            element={
+              <AuthenticatedComponent>
+                <PrePoll />
+              </AuthenticatedComponent>
+            }
+          />
+          <Route
+            path="/userProfile"
+            element={
+              <AuthenticatedComponent>
+                <UserProfile />
+              </AuthenticatedComponent>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </div>
