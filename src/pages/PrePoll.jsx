@@ -97,9 +97,9 @@ const numOfKidsData = [
 
 const incomeData = [
   { label: "0-5,000", value: "0-5,000" },
-  { label: "5,000-10,000", value: "5,000-10,000" },
-  { label: "10,000-20,000", value: "10,000-20,000" },
-  { label: "20,000-30,000", value: "20,000-30,000" },
+  { label: "5,001-10,000", value: "5,001-10,000" },
+  { label: "10,001-20,000", value: "10,001-20,000" },
+  { label: "20,001-30,000", value: "20,001-30,000" },
   { label: "More than 30,000", value: "More than 30,000" },
 ];
 
@@ -170,7 +170,9 @@ const PrePoll = (props) => {
       },
     });
     console.log(data);
+    const pollId = await data.json();
     if (data.ok) {
+      localStorage.setItem("ActivePollId", pollId._id);
       setIsSignedUp({
         isOpen: true,
         isSignedUp: true,
@@ -231,10 +233,11 @@ const PrePoll = (props) => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Welcome
+            Preliminary questionnaire
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            User Signed Up Successfully!
+            questionnaire has been completed , you are been forward to the poll
+            creation
           </Typography>
           <Button
             variant="dark"

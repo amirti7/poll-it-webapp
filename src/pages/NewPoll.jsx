@@ -10,7 +10,6 @@ import { Button } from "react-bootstrap";
 import ImageAnswers from "../components/Questions/ImageAnswers";
 
 const NewPoll = (props) => {
-  const [pollName, setPollName] = useState("");
   const [questionToDisplay, setQuestionToDisplay] = useState("");
   const [finishedQuestions, setFinishedQuestions] = useState({
     questions: [
@@ -24,7 +23,6 @@ const NewPoll = (props) => {
   });
 
   const [finishedPoll, setFinishedPoll] = useState({
-    pollName: "",
     questions: [],
   });
 
@@ -50,47 +48,20 @@ const NewPoll = (props) => {
 
   async function handleSubmitPoll() {
     let updatedPoll;
-    setFinishedPoll((prevState) => {
-      let finalQuestions = finishedQuestions.questions;
-      finalQuestions.shift(0);
-      updatedPoll = {
-        pollName: pollName,
-        questions: finalQuestions,
-      };
-      console.log(updatedPoll);
-      return {
-        pollName: updatedPoll.pollName,
-        questions: updatedPoll.questions,
-      };
-    });
-
-    const dataToServer = {
-      pollName: pollName,
-      accountId: localStorage.getItem("UserId")
+    let finalQuestions = finishedQuestions.questions;
+    finalQuestions.shift(0);
+    updatedPoll = {
+      questions: finalQuestions,
     };
+    console.log(updatedPoll);
+
+    setFinishedPoll({
+      questions: updatedPoll.questions,
+    });
 
     const accessToken = localStorage.getItem("UserAccessToken");
-
     const auth = "Bearer " + accessToken;
-
-    const response = await fetch("http://10.10.248.124:8000/poll/create", {
-      method: "POST",
-      body: JSON.stringify(dataToServer),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: auth,
-      },
-    });
-
-    let pollId;
-    const data = await response.json();
-    console.log(response);
-    console.log(data);
-    if (response.ok) {
-      pollId = data._id;
-    }
-    console.log(pollId);
-
+    const pollId = localStorage.getItem("ActivePollId");
     updatedPoll.questions.forEach((question) => {
       console.log(question);
       const data = {
@@ -126,13 +97,6 @@ const NewPoll = (props) => {
             );
           })}
         </div>
-        <h4>Poll Name:</h4>
-        <TextField
-          variant="filled"
-          value={pollName}
-          onChange={(e) => setPollName(e.target.value)}
-          label="Poll Name:"
-        />
       </div>
       <div style={{ marginTop: "10px" }}>
         <Dropdown>
