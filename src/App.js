@@ -32,18 +32,13 @@ const AuthenticatedComponent = ({ children }) => {
 function App() {
   return (
     <div className="App">
-      {/* <NavigationBar></NavigationBar>
-      <DemoDiv></DemoDiv>
-      <StepsDiv></StepsDiv>
-      <Testimonials></Testimonials>
-      <StickyFooter></StickyFooter> */}
-
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
-          {/* <Route path="/about_us" element={<AboutUs />} /> */}
+          <Route path="/about_us" element={<AboutUs />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/NewPoll" element={<NewPoll />} />
           <Route
             path="/prePoll"
             element={

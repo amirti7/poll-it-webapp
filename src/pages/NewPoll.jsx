@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import NavigationBar from "../components/NavigationBar";
 import StickyFooter from "../components/StickyFooter";
 import Dropdown from "react-bootstrap/Dropdown";
 import MultipleChoice from "../components/Questions/MultipleChoice";
 import ImageChoice from "../components/Questions/ImageChoice";
 import Range from "../components/Questions/Range";
-import TextField from "@mui/material/TextField";
 import { Button } from "react-bootstrap";
 import ImageAnswers from "../components/Questions/ImageAnswers";
 
 const NewPoll = (props) => {
+  const myRef = useRef(null);
+  const [questionToEdit, setQuestionToEdit] = useState();
+  const [clickedOnEditQuestions, setClickedOnEditQuestions] = useState(false);
   const [questionToDisplay, setQuestionToDisplay] = useState("");
   const [finishedQuestions, setFinishedQuestions] = useState({
     questions: [
@@ -38,12 +40,17 @@ const NewPoll = (props) => {
           type: question.type,
         },
       ];
-      console.log(updatedQuestions);
+      // console.log(updatedQuestions);
 
       return {
         questions: updatedQuestions,
       };
     });
+  };
+
+  const handleClickOnEdit = (question) => {
+    setQuestionToDisplay("multiple");
+    myRef.current();
   };
 
   async function handleSubmitPoll() {
@@ -79,7 +86,10 @@ const NewPoll = (props) => {
           Authorization: auth,
         },
       })
-        .then((response) => response.json())
+        .then((response) => {
+          const res = response.json();
+          console.log(res);
+        })
         .then((data) => console.log(data));
     });
   }
@@ -92,7 +102,7 @@ const NewPoll = (props) => {
           {finishedQuestions.questions.map((question) => {
             return (
               <div>
-                <p>{question.questionName}</p>
+                <Button variant="dark">{question.questionName}</Button>
               </div>
             );
           })}
@@ -120,7 +130,10 @@ const NewPoll = (props) => {
           </Dropdown.Menu>
         </Dropdown>
         {questionToDisplay === "multiple" && (
-          <MultipleChoice onSubmitQuestion={handleFinishedQuestions} />
+          <MultipleChoice
+            onSubmitQuestion={handleFinishedQuestions}
+            ref={myRef}
+          />
         )}
         {questionToDisplay === "image" && (
           <ImageChoice onSubmitQuestion={handleFinishedQuestions} />
@@ -128,6 +141,14 @@ const NewPoll = (props) => {
         {questionToDisplay === "range" && <Range />}
         {questionToDisplay === "ImageAnswers" && (
           <ImageAnswers onSubmitQuestion={handleFinishedQuestions} />
+        )}
+        {clickedOnEditQuestions && (
+          <MultipleChoice
+            onSubmitQuestion={handleFinishedQuestions}
+            // onLoad={handleLoadQuestion}
+            question={questionToEdit}
+            ref={myRef}
+          />
         )}
       </div>
       <Button onClick={handleSubmitPoll}>Submit Poll</Button>
