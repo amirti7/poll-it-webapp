@@ -118,6 +118,7 @@ const PrePoll = (props) => {
   const [pollName, setPollName] = useState("");
   const navigate = useNavigate();
   const userID = localStorage.getItem("UserId");
+  let prePollData;
 
   const accessToken = localStorage.getItem("UserAccessToken");
 
@@ -151,6 +152,7 @@ const PrePoll = (props) => {
     const dataToServer = {
       pollName: pollName,
       accountId: userID,
+      age: ageRange.map((item) => item.value),
       gender: gender.map((item) => item.value),
       educationLevel: educationLevel.map((item) => item.value),
       maritalStatus: maritalStatus.map((item) => item.value),
@@ -160,31 +162,33 @@ const PrePoll = (props) => {
     };
     const json = JSON.stringify(dataToServer);
     console.log(json);
+    prePollData = json;
+    navigate("/NewPoll", { state: { prePoll: prePollData } }); // delete after returning the POST call
 
-    const data = await fetch("https://10.10.248.124:443/poll/create", {
-      method: "POST",
-      body: json,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: auth,
-      },
-    });
-    console.log(data);
-    const pollId = await data.json();
-    if (data.ok) {
-      localStorage.setItem("ActivePollId", pollId._id);
-      setIsSignedUp({
-        isOpen: true,
-        isSignedUp: true,
-      });
-    } else {
-      const jsonData = await data.json();
-      console.log(jsonData);
-      setErrorInSignUp({
-        isOpen: true,
-        errorMessage: JSON.stringify(jsonData.erros),
-      });
-    }
+    // const data = await fetch("https://10.10.248.124:443/poll/create", {
+    //   method: "POST",
+    //   body: json,
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: auth,
+    //   },
+    // });
+    // console.log(data);
+    // const pollId = await data.json();
+    // if (data.ok) {
+    //   localStorage.setItem("ActivePollId", pollId._id);
+    //   setIsSignedUp({
+    //     isOpen: true,
+    //     isSignedUp: true,
+    //   });
+    // } else {
+    //   const jsonData = await data.json();
+    //   console.log(jsonData);
+    //   setErrorInSignUp({
+    //     isOpen: true,
+    //     errorMessage: JSON.stringify(jsonData.erros),
+    //   });
+    // }
   }
 
   const handleCloseErrorModal = () => {
@@ -199,7 +203,7 @@ const PrePoll = (props) => {
       isOpen: false,
       isSignedUp: true,
     });
-    navigate("/NewPoll");
+    navigate("/NewPoll", { state: { prePoll: prePollData } });
   };
   return (
     <div>

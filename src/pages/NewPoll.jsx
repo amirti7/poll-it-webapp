@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import NavigationBar from "../components/NavigationBar";
 import StickyFooter from "../components/StickyFooter";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -9,6 +10,9 @@ import { Button } from "react-bootstrap";
 import ImageAnswers from "../components/Questions/ImageAnswers";
 
 const NewPoll = (props) => {
+  const location = useLocation();
+  const prePoll = location.state.prePoll;
+  const navigate = useNavigate();
   const myRef = useRef(null);
   const [questionToEdit, setQuestionToEdit] = useState();
   const [clickedOnEditQuestions, setClickedOnEditQuestions] = useState(false);
@@ -66,51 +70,55 @@ const NewPoll = (props) => {
       questions: updatedPoll.questions,
     });
 
-    const accessToken = localStorage.getItem("UserAccessToken");
-    const auth = "Bearer " + accessToken;
-    const pollId = localStorage.getItem("ActivePollId");
-    updatedPoll.questions.forEach((question) => {
-      console.log(question);
-      if (question.type === "Image Question") {
-        const data = question.questionPic;
-        let formData = new FormData();
-        formData.append(question.questionName, data);
-        fetch("https://10.10.248.124:443/upload", {
-          method: "POST",
-          body: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: auth,
-          },
-        })
-          .then((response) => {
-            const res = response.json();
-            console.log(res);
-          })
-          .then((data) => console.log(data));
-      } else {
-      }
-      // const data = {
-      //   pollQuestion: question.questionName,
-      //   pollQuestionType: question.type,
-      //   pollQuestionImage: question.questionPic,
-      //   choices: question.answers,
-      //   pollId: pollId,
-      // };
-      // fetch("https://10.10.248.124:443/poll_question/create", {
-      //   method: "POST",
-      //   body: JSON.stringify(data),
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: auth,
-      //   },
-      // })
-      //   .then((response) => {
-      //     const res = response.json();
-      //     console.log(res);
-      //   })
-      //   .then((data) => console.log(data));
+    navigate("/ConfirmPayment", {
+      state: { poll: updatedPoll, prePoll: prePoll },
     });
+
+    // const accessToken = localStorage.getItem("UserAccessToken");
+    // const auth = "Bearer " + accessToken;
+    // const pollId = localStorage.getItem("ActivePollId");
+    // updatedPoll.questions.forEach((question) => {
+    //   console.log(question);
+    //   if (question.type === "Image Question") {
+    //     const data = question.questionPic;
+    //     let formData = new FormData();
+    //     formData.append(question.questionName, data);
+    //     fetch("https://10.10.248.124:443/upload", {
+    //       method: "POST",
+    //       body: formData,
+    //       headers: {
+    //         "Content-Type": "multipart/form-data",
+    //         Authorization: auth,
+    //       },
+    //     })
+    //       .then((response) => {
+    //         const res = response.json();
+    //         console.log(res);
+    //       })
+    //       .then((data) => console.log(data));
+    //   } else {
+    //   }
+    //   const data = {
+    //     pollQuestion: question.questionName,
+    //     pollQuestionType: question.type,
+    //     pollQuestionImage: question.questionPic,
+    //     choices: question.answers,
+    //     pollId: pollId,
+    //   };
+    //   fetch("https://10.10.248.124:443/poll_question/create", {
+    //     method: "POST",
+    //     body: JSON.stringify(data),
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: auth,
+    //     },
+    //   })
+    //     .then((response) => {
+    //       const res = response.json();
+    //       console.log(res);
+    //     })
+    //     .then((data) => console.log(data));
+    // });
   }
 
   return (

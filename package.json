@@ -15,19 +15,20 @@
     "firebase": "^9.6.11",
     "react": "^18.0.0",
     "react-bootstrap": "^2.2.3",
+    "react-credit-cards": "^0.8.3",
     "react-dom": "^18.0.0",
     "react-facebook-login": "^4.1.1",
     "react-icons": "^4.3.1",
     "react-minimal-pie-chart": "^8.3.0",
     "react-multi-select-component": "^4.2.5",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-social-login-buttons": "^3.6.0",
     "styled-components": "^5.3.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": " HTTPS=true react-scripts start",
+    "start": "set HTTPS=true && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
