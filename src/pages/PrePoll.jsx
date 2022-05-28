@@ -56,14 +56,14 @@ const educationLevelData = [
   { label: "Elementary", value: "Elementary" },
   { label: "Middle School", value: "Middle School" },
   { label: "High School", value: "High School" },
-  { label: "During Bachelor's", value: "During Bachelor's" },
-  { label: "Bachelor's or Higher", value: "Bachelor's or Higher" },
+  { label: "During Bachelor's", value: "During Bachelors" },
+  { label: "Bachelor's or Higher", value: "Bachelors or Higher" },
 ];
 
 const genderData = [
   { label: "Male", value: "Male" },
   { label: "Female", value: "Female" },
-  { label: "Don't Wish To Specify", value: "Don't Wish To Specify" },
+  { label: "Don't Wish To Specify", value: "Dont Wish To Specify" },
 ];
 
 const ageRangeData = [
@@ -161,7 +161,7 @@ const PrePoll = (props) => {
     const json = JSON.stringify(dataToServer);
     console.log(json);
 
-    const data = await fetch("http://10.10.248.124:8000/poll/create", {
+    const data = await fetch("https://10.10.248.124:443/poll/create", {
       method: "POST",
       body: json,
       headers: {

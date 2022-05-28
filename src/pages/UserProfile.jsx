@@ -81,7 +81,7 @@ const UserProfile = (props) => {
       email: userEmail,
     };
     console.log(body);
-    const response = await fetch("http://10.10.248.124:8000/auth/update/", {
+    const response = await fetch("https://10.10.248.124:443/auth/update/", {
       method: "PUT",
       body: JSON.stringify(body),
       headers: {
@@ -98,7 +98,7 @@ const UserProfile = (props) => {
 
   async function fetchUserDetails() {
     const data = await fetch(
-      "http://10.10.248.124:8000/auth/getAccountById/" + userID,
+      "https://10.10.248.124:443/auth/getAccountById/" + userID,
       {
         method: "GET",
         headers: {
@@ -123,7 +123,7 @@ const UserProfile = (props) => {
     };
     console.log(body);
     const response = await fetch(
-      "http://10.10.248.124:8000/auth/updatePassword/",
+      "https://10.10.248.124:443/auth/updatePassword/",
       {
         method: "PUT",
         body: JSON.stringify(body),

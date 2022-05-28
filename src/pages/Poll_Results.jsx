@@ -43,7 +43,7 @@ const AboutUs = (props) => {
 
   async function getData() {
     const pollsData = await fetch(
-      "http://10.10.248.124:8000/poll/getPollsByClientId/" + userID,
+      "https://10.10.248.124:443/poll/getPollsByClientId/" + userID,
       {
         method: "GET",
         headers: {
@@ -65,7 +65,7 @@ const AboutUs = (props) => {
 
     pollsDetails.forEach(async (poll) => {
       const pollQuestionData = await fetch(
-        "http://10.10.248.124:8000/poll_question/getPollQuestionsByPollId/" +
+        "https://10.10.248.124:443/poll_question/getPollQuestionsByPollId/" +
           poll._id,
         {
           method: "GET",
@@ -93,7 +93,7 @@ const AboutUs = (props) => {
       });
 
       const answersData = await fetch(
-        "http://10.10.248.124:8000/answer/getAnswersByPollId/" + poll._id,
+        "https://10.10.248.124:443/answer/getAnswersByPollId/" + poll._id,
         {
           method: "GET",
           headers: {

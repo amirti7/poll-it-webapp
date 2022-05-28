@@ -25,6 +25,16 @@ const NavigationBar = (props) => {
   const [userCheckedOut, setUserCheckedOut] = useState(false);
 
   async function signOut() {
+    if (localStorage.getItem("LoggedInWithFacebook")) {
+      window.FB.logout();
+      localStorage.removeItem("CheckedInUser");
+      localStorage.removeItem("UserAccessToken");
+      localStorage.removeItem("UserRefreshToken");
+      localStorage.removeItem("UserId");
+      localStorage.removeItem("LoggedInWithFacebook");
+      setUserCheckedOut(true);
+      return;
+    }
     let newData, resData;
 
     const dataToServer = {
@@ -37,7 +47,7 @@ const NavigationBar = (props) => {
 
     const json = JSON.stringify(dataToServer);
 
-    const response = await fetch("http://10.10.248.124:8000/auth/logout", {
+    const response = await fetch("https://10.10.248.124:443/auth/logout", {
       method: "POST",
       body: json,
       headers: {
@@ -59,7 +69,7 @@ const NavigationBar = (props) => {
 
     if (!response.ok) {
       if (response.status == 403) {
-        const res = await fetch("http://10.10.248.124:8000/auth/refreshToken", {
+        const res = await fetch("https://10.10.248.124:443/auth/refreshToken", {
           method: "POST",
           body: json,
           headers: {
@@ -75,7 +85,7 @@ const NavigationBar = (props) => {
     if (resData.ok) {
       dataToServer.refreshToken = newData.refreshToken;
       const newJson = JSON.stringify(dataToServer);
-      const response = await fetch("http://10.10.248.124:8000/auth/logout", {
+      const response = await fetch("https://10.10.248.124:443/auth/logout", {
         method: "POST",
         body: newJson,
         headers: {
@@ -116,7 +126,7 @@ const NavigationBar = (props) => {
         <Nav.Link href="/about_us">Polls</Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link href="/PrePoll">New Poll</Nav.Link>
+        <Nav.Link href="/NewPoll">New Poll</Nav.Link>
       </Nav.Item>
       <Nav.Item className="ms-auto">
         <Nav.Link href="/userProfile">

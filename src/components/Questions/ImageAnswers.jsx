@@ -9,9 +9,36 @@ const ImageAnswers = (props) => {
     type: "Image Answers",
   });
   const [enteredQuestionName, setEnteredQuestionName] = useState("");
-  const [enteredQuestionPic, setEnteredQuestionPic] = useState("");
+  const [validPicture, setValidPicture] = useState([]);
+
+  const isValidURL = (string, index) => {
+    let url;
+    if (string === "") {
+      setValidPicture((prevState) => {
+        const updatedvalidation = [...prevState, (prevState[index] = false)];
+        return updatedvalidation;
+      });
+      return;
+    }
+    try {
+      url = new URL(string);
+    } catch (_) {
+      setValidPicture((prevState) => {
+        const updatedvalidation = [...prevState, (prevState[index] = false)];
+        return updatedvalidation;
+      });
+      return;
+    }
+    setValidPicture((prevState) => {
+      const updatedvalidation = [...prevState, (prevState[index] = true)];
+      return updatedvalidation;
+    });
+    return;
+  };
 
   const handleEnteredAnswers = (e, index) => {
+    isValidURL(e.target.value, index);
+    console.log(validPicture);
     if (
       question.answers[index] !== "" &&
       question.answers[index] !== e.target.value &&
@@ -101,9 +128,11 @@ const ImageAnswers = (props) => {
         return (
           <div>
             <TextField
+              error={!validPicture[index]}
               variant="filled"
               label="Answer"
               onBlur={(e) => handleEnteredAnswers(e, index)}
+              helperText={!validPicture[index] && " URL is not Valid"}
             />
             <input
               type="button"

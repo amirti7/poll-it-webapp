@@ -8,6 +8,9 @@ import { useState } from "react";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { Card } from "react-bootstrap";
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
+import { FacebookLoginButton } from "react-social-login-buttons";
 
 const Input = styled.input`
   width: 300px;
@@ -62,6 +65,45 @@ const LoginPage = (props) => {
     isOpen: false,
     errorMessage: "",
   });
+  const [login, setLogin] = useState(false);
+
+  const responseFacebook = (response) => {
+    let status;
+    // console.log(response);
+    const dataToServer = {
+      facebookId: response.id,
+      email: response.email,
+      name: response.name,
+      profilePicUrl: response.picture.data.url,
+      role: "Client",
+    };
+    fetch("https://10.10.248.124:443/auth/facebook", {
+      method: "POST",
+      body: JSON.stringify(dataToServer),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((data) => data.json())
+      .then((json) => {
+        if (json.accessToken) {
+          setIsLoggedIn({
+            isOpen: true,
+            isLogin: true,
+          });
+          localStorage.setItem("CheckedInUser", json.account.email);
+          localStorage.setItem("UserAccessToken", json.accessToken);
+          localStorage.setItem("UserRefreshToken", json.refreshToken);
+          localStorage.setItem("UserId", json.account.facebookId);
+          localStorage.setItem("LoggedInWithFacebook", true);
+        } else {
+          setErrorInLogin({
+            isOpen: true,
+            errorMessage: json.error,
+          });
+        }
+      });
+  };
   const navigate = useNavigate();
 
   async function handleLogin(e) {
@@ -71,7 +113,7 @@ const LoginPage = (props) => {
       password: userPassword,
     };
 
-    const response = await fetch("http://10.10.248.124:8000/auth/login", {
+    const response = await fetch("https://10.10.248.124:443/auth/login", {
       method: "POST",
       body: JSON.stringify(dataToServer),
       headers: {
@@ -217,6 +259,25 @@ const LoginPage = (props) => {
                 Sign-Up
               </Button>
             </p>
+            <div class="container" style={{ borderRaduis: "8px" }}>
+              <FacebookLogin
+                appId="1202513657162406"
+                autoLoad={false}
+                fields="name,email,picture"
+                scope="public_profile,user_friends,email"
+                callback={responseFacebook}
+                icon="fa-facebook"
+                render={(renderProps) => (
+                  <FacebookLoginButton
+                    onClick={renderProps.onClick}
+                    style={{
+                      width: "190px",
+                      paddingLeft: "10px",
+                    }}
+                  />
+                )}
+              />
+            </div>
           </Col>
         </Row>
       </Container>

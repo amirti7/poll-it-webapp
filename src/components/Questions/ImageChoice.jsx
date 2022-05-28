@@ -3,6 +3,8 @@ import React from "react";
 import TextField from "@mui/material/TextField";
 
 const ImageChoice = (props) => {
+  const accessToken = localStorage.getItem("UserAccessToken");
+  const auth = "Bearer " + accessToken;
   const [question, setQuestion] = useState({
     questionName: "",
     questionPic: "",
@@ -11,6 +13,41 @@ const ImageChoice = (props) => {
   });
   const [enteredQuestionName, setEnteredQuestionName] = useState("");
   const [enteredQuestionPic, setEnteredQuestionPic] = useState("");
+  const [validPicture, setValidPicture] = useState(true);
+
+  async function reciveImage(event) {
+    let img;
+    if (event.target.files && event.target.files[0]) {
+      img = event.target.files[0];
+    }
+    var formData = new FormData();
+    formData.append("file", img);
+    const response = await fetch("https://poll-it.cs.colman.ac.il/upload", {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: auth,
+      },
+    });
+    const data = await response.json();
+    setEnteredQuestionPic(data.url);
+  }
+
+  const isValidURL = (string) => {
+    let url;
+    if (string === "") {
+      setValidPicture(true);
+      return true;
+    }
+    try {
+      url = new URL(string);
+    } catch (_) {
+      setValidPicture(false);
+      return false;
+    }
+    setValidPicture(true);
+    return true;
+  };
 
   const handleEnteredAnswers = (e, index) => {
     if (
@@ -98,6 +135,9 @@ const ImageChoice = (props) => {
   };
 
   const handleSubmitQuestion = () => {
+    if (!validPicture || enteredQuestionPic === "") {
+      return;
+    }
     props.onSubmitQuestion(question);
   };
 
@@ -113,14 +153,24 @@ const ImageChoice = (props) => {
           label="Question"
         />
         <br />
-        <label>Please enter your question picture:</label>
+        <label>Please enter your question picture valid URL:</label>
         <TextField
+          error={!validPicture}
           variant="filled"
           value={enteredQuestionPic}
           onChange={(e) => handleQuestionPic(e)}
+          onBlur={(e) => isValidURL(e.target.value)}
           label="Picture"
+          helperText={!validPicture && " URL is not Valid"}
         />
-        <br />
+
+        <label>Or Upload image:</label>
+        <input
+          type="file"
+          id="image-input"
+          accept="image/jpeg, image/png, image/jpg"
+          onChange={(e) => reciveImage(e)}
+        />
       </div>
       {question.answers.map((answer, index) => {
         return (

@@ -5,6 +5,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import PollItLogo from "../assets/images/Logo.png";
+import { useEffect, useState } from "react";
 
 const Image = styled.img`
   @media (max-width: 767px) {
@@ -30,6 +31,11 @@ const Title = styled.p`
 `;
 
 const WelcomeDiv = (props) => {
+  const [userSignedIn, setUserSignedIn] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("CheckedInUser")) setUserSignedIn(true);
+    else setUserSignedIn(false);
+  }, [userSignedIn]);
   return (
     <div style={{ margin: "10px" }}>
       <Container>
@@ -44,9 +50,11 @@ const WelcomeDiv = (props) => {
               With Poll-It you can make the best Polls and publish them to a
               small and unique sample group created specficlly for your poll.
             </p>
-            <Button href="/signup" size="lg" variant="outline-dark">
-              Sign-Up
-            </Button>
+            {!userSignedIn && (
+              <Button href="/signup" size="lg" variant="outline-dark">
+                Sign-Up
+              </Button>
+            )}
           </Col>
           <Col md={6}>
             <Image src={PollItLogo}></Image>

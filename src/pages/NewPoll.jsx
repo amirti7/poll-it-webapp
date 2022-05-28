@@ -71,26 +71,45 @@ const NewPoll = (props) => {
     const pollId = localStorage.getItem("ActivePollId");
     updatedPoll.questions.forEach((question) => {
       console.log(question);
-      const data = {
-        pollQuestion: question.questionName,
-        pollQuestionType: question.type,
-        pollQuestionImage: question.questionPic,
-        choices: question.answers,
-        pollId: pollId,
-      };
-      fetch("http://10.10.248.124:8000/poll_question/create", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: auth,
-        },
-      })
-        .then((response) => {
-          const res = response.json();
-          console.log(res);
+      if (question.type === "Image Question") {
+        const data = question.questionPic;
+        let formData = new FormData();
+        formData.append(question.questionName, data);
+        fetch("https://10.10.248.124:443/upload", {
+          method: "POST",
+          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: auth,
+          },
         })
-        .then((data) => console.log(data));
+          .then((response) => {
+            const res = response.json();
+            console.log(res);
+          })
+          .then((data) => console.log(data));
+      } else {
+      }
+      // const data = {
+      //   pollQuestion: question.questionName,
+      //   pollQuestionType: question.type,
+      //   pollQuestionImage: question.questionPic,
+      //   choices: question.answers,
+      //   pollId: pollId,
+      // };
+      // fetch("https://10.10.248.124:443/poll_question/create", {
+      //   method: "POST",
+      //   body: JSON.stringify(data),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: auth,
+      //   },
+      // })
+      //   .then((response) => {
+      //     const res = response.json();
+      //     console.log(res);
+      //   })
+      //   .then((data) => console.log(data));
     });
   }
 
