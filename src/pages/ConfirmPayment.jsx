@@ -40,62 +40,71 @@ const ConfirmPayment = (props) => {
   const [enteredAmountOfAccounts, setEnteredAmountOfAccount] = useState();
   const [priceOffer, setPriceOffer] = useState(0);
   const [readyToPay, setReadyToPay] = useState(false);
+  const [coinsPerUser, setCoinsPerUser] = useState(0);
 
-  console.log(updatedPoll);
-  console.log(prePoll);
+  // console.log(updatedPoll);
+  // console.log(prePoll);
 
   useEffect(() => {
     handleSampleGroupCount();
   }, []);
 
   const calculatePriceOffer = () => {
-    let pricePerQuestion = 0.1
-    const numOfQuestion = updatedPoll.pollQuestions.length
+    let price = 0.1;
+    const numOfQuestions = updatedPoll.questions.length;
 
     //Base Price
-    if (numOfQuestion != 1) {
-      pricePerQuestion = 1
+    if (numOfQuestions != 1) {
+      price = 1;
       // Age/Gender
-      if (prePoll.ageRange.length != 9 || prePoll.gender.length != 3) {
-          pricePerQuestion += 0.5
+      if (prePoll.age.length != 9 || prePoll.gender.length != 3) {
+        price += 0.5;
       }
     } else {
-      if (prePoll.ageRange.length != 9 || prePoll.gender.length != 3) {
-        pricePerQuestion += 0.05
+      if (prePoll.age.length != 9 || prePoll.gender.length != 3) {
+        price += 0.05;
       }
     }
-    
+
     //extra Price
 
     // Maritial/Children
-    if(prePoll.maritalStatus.length != 5 || prePoll.numOfKids != 7 ) {
-      if (numOfQuestion > 5) {
-        pricePerQuestion += 1
+    if (
+      prePoll.maritalStatus.length != 5 ||
+      prePoll.numberOfChildrens.length != 7
+    ) {
+      if (numOfQuestions > 5) {
+        price += 1;
       } else {
-        pricePerQuestion += 0.5
+        price += 0.5;
       }
     }
 
     // Job/Income/Studies
-    if (prePoll.permanentJob.length != 2 || prePoll.income.length != 5 || prePoll.educationLevel.length != 6 ) {
-      if (numOfQuestion > 5) {
-        pricePerQuestion += 1
+    if (
+      prePoll.permanentJob.length != 2 ||
+      prePoll.income.length != 5 ||
+      prePoll.educationLevel.length != 6
+    ) {
+      if (numOfQuestions > 5) {
+        price += 1;
       } else {
-        pricePerQuestion += 0.5
+        price += 0.5;
       }
-    } 
-    
-    return pricePerQuestion * numOfQuestion
+    }
 
+    return price * enteredAmountOfAccounts;
   };
 
   async function handlePayment() {
     setReadyToPay(true);
   }
 
-  const handlePriceOffer = (event) => {
-    setEnteredAmountOfAccount(event.target.value);
-    setPriceOffer(calculatePriceOffer());
+  const handlePriceOffer = () => {
+    const price = calculatePriceOffer();
+    setPriceOffer(price);
+    const coins = (priceOffer / 2 / enteredAmountOfAccounts) * 23;
+    setCoinsPerUser(coins);
   };
 
   async function handleSampleGroupCount() {
@@ -159,7 +168,8 @@ const ConfirmPayment = (props) => {
               <label>Amout of people you want to answer your poll:</label>
               <input
                 value={enteredAmountOfAccounts}
-                onChange={(e) => handlePriceOffer(e)}
+                onChange={(e) => setEnteredAmountOfAccount(e.target.value)}
+                onBlur={handlePriceOffer}
               ></input>
               <label>/</label>
               <input disabled value={maxAccounts}></input>
@@ -177,6 +187,9 @@ const ConfirmPayment = (props) => {
               <button onClick={handlePayment}>
                 confirm and Procced to checkout
               </button>
+            </div>
+            <div>
+              <CreditCard></CreditCard>
             </div>
           </Col>
           <Col md={6}>
