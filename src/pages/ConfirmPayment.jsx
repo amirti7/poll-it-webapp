@@ -48,7 +48,46 @@ const ConfirmPayment = (props) => {
     handleSampleGroupCount();
   }, []);
 
-  const calculatePriceOffer = () => {};
+  const calculatePriceOffer = () => {
+    let pricePerQuestion = 0.1
+    const numOfQuestion = updatedPoll.pollQuestions.length
+
+    //Base Price
+    if (numOfQuestion != 1) {
+      pricePerQuestion = 1
+      // Age/Gender
+      if (prePoll.ageRange.length != 9 || prePoll.gender.length != 3) {
+          pricePerQuestion += 0.5
+      }
+    } else {
+      if (prePoll.ageRange.length != 9 || prePoll.gender.length != 3) {
+        pricePerQuestion += 0.05
+      }
+    }
+    
+    //extra Price
+
+    // Maritial/Children
+    if(prePoll.maritalStatus.length != 5 || prePoll.numOfKids != 7 ) {
+      if (numOfQuestion > 5) {
+        pricePerQuestion += 1
+      } else {
+        pricePerQuestion += 0.5
+      }
+    }
+
+    // Job/Income/Studies
+    if (prePoll.permanentJob.length != 2 || prePoll.income.length != 5 || prePoll.educationLevel.length != 6 ) {
+      if (numOfQuestion > 5) {
+        pricePerQuestion += 1
+      } else {
+        pricePerQuestion += 0.5
+      }
+    } 
+    
+    return pricePerQuestion * numOfQuestion
+
+  };
 
   async function handlePayment() {
     setReadyToPay(true);
