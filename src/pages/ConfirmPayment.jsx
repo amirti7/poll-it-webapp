@@ -189,6 +189,7 @@ const ConfirmPayment = (props) => {
               </button>
             </div>
             <div>
+              <p></p>
               <CreditCard></CreditCard>
             </div>
           </Col>
