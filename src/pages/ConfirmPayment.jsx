@@ -104,7 +104,9 @@ const ConfirmPayment = (props) => {
   function handlePayment() {
     if (
       enteredAmountOfAccounts === undefined ||
-      enteredAmountOfAccounts === ""
+      enteredAmountOfAccounts === "" ||
+      enteredAmountOfAccounts === "0" ||
+      parseInt(enteredAmountOfAccounts) === 0
     ) {
       return;
     }
@@ -114,7 +116,8 @@ const ConfirmPayment = (props) => {
   const handlePriceOffer = () => {
     if (
       enteredAmountOfAccounts === undefined ||
-      enteredAmountOfAccounts === ""
+      enteredAmountOfAccounts === "" ||
+      enteredAmountOfAccounts === "0"
     ) {
       setReadyToPay(false);
       setPriceOffer(0);
