@@ -81,14 +81,17 @@ const UserProfile = (props) => {
       email: userEmail,
     };
     console.log(body);
-    const response = await fetch("https://10.10.248.124:443/auth/update/", {
-      method: "PUT",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: auth,
-      },
-    });
+    const response = await fetch(
+      "https://poll-it.cs.colman.ac.il/auth/update/",
+      {
+        method: "PUT",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: auth,
+        },
+      }
+    );
     const data = await response.json();
     console.log(data);
     if (localStorage.getItem("CheckedInUser") !== body.email) {
@@ -98,7 +101,7 @@ const UserProfile = (props) => {
 
   async function fetchUserDetails() {
     const data = await fetch(
-      "https://10.10.248.124:443/auth/getAccountById/" + userID,
+      "https://poll-it.cs.colman.ac.il/auth/getAccountById/" + userID,
       {
         method: "GET",
         headers: {
@@ -123,7 +126,7 @@ const UserProfile = (props) => {
     };
     console.log(body);
     const response = await fetch(
-      "https://10.10.248.124:443/auth/updatePassword/",
+      "https://poll-it.cs.colman.ac.il/auth/updatePassword/",
       {
         method: "PUT",
         body: JSON.stringify(body),
