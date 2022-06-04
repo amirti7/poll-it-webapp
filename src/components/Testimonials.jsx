@@ -62,7 +62,7 @@ const Testimonials = (props) => {
       <Carousel variant="dark" interval={1000}>
         {data.map((obj) => {
           return (
-            <Carousel.Item interval={3000}>
+            <Carousel.Item interval={3000} key={obj.name}>
               <Card
                 className="mx-auto"
                 style={{ width: "23rem", height: "28rem" }}
