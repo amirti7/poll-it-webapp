@@ -77,7 +77,7 @@ const LoginPage = (props) => {
       profilePicUrl: response.picture.data.url,
       role: "Client",
     };
-    fetch("https://10.10.248.124:443/auth/facebook", {
+    fetch("https://poll-it.cs.colman.ac.il/auth/facebook", {
       method: "POST",
       body: JSON.stringify(dataToServer),
       headers: {
@@ -113,7 +113,7 @@ const LoginPage = (props) => {
       password: userPassword,
     };
 
-    const response = await fetch("https://10.10.248.124:443/auth/login", {
+    const response = await fetch("https://poll-it.cs.colman.ac.il/auth/login", {
       method: "POST",
       body: JSON.stringify(dataToServer),
       headers: {

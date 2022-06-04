@@ -83,7 +83,7 @@ const SignUp = (props) => {
     const json = JSON.stringify(dataToServer);
     console.log(json);
 
-    const data = await fetch("https://10.10.248.124:443/auth/register", {
+    const data = await fetch("https://poll-it.cs.colman.ac.il/auth/register", {
       method: "POST",
       body: json,
       headers: {
