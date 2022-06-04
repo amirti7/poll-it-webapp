@@ -57,6 +57,7 @@ export default class App extends React.Component {
 
     this.setState({ formData });
     this.form.reset();
+    this.setState({focused: "number"})
   };
 
   render() {
@@ -119,7 +120,7 @@ export default class App extends React.Component {
                     type="tel"
                     name="cvc"
                     className="form-control"
-                    placeholder="CVC"
+                    placeholder="CVV"
                     pattern="\d{3,4}"
                     required
                     onChange={this.handleInputChange}
