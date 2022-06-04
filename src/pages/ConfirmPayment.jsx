@@ -31,23 +31,28 @@ const Title = styled.p`
 `;
 
 const ConfirmPayment = (props) => {
-  let maxAccounts;
   const location = useLocation();
   const updatedPoll = location.state.poll;
   const prePoll = JSON.parse(location.state.prePoll);
   const UserAccessToken = localStorage.getItem("UserAccessToken");
   const auth = "Bearer " + UserAccessToken;
   const [enteredAmountOfAccounts, setEnteredAmountOfAccount] = useState();
+  const [maxAccounts, setMaxAccounts] = useState();
   const [priceOffer, setPriceOffer] = useState(0);
   const [readyToPay, setReadyToPay] = useState(false);
   const [coinsPerUser, setCoinsPerUser] = useState(0);
+  const [PaymentDone, setPaymentDone] = useState(false);
 
-  // console.log(updatedPoll);
-  // console.log(prePoll);
+  console.log(updatedPoll);
+  console.log(prePoll);
 
   useEffect(() => {
     handleSampleGroupCount();
   }, []);
+
+  const handleDonePayment = () => {
+    setPaymentDone(true);
+  };
 
   const calculatePriceOffer = () => {
     let price = 0.1;
@@ -96,20 +101,35 @@ const ConfirmPayment = (props) => {
     return price * enteredAmountOfAccounts;
   };
 
-  async function handlePayment() {
+  function handlePayment() {
+    if (
+      enteredAmountOfAccounts === undefined ||
+      enteredAmountOfAccounts === ""
+    ) {
+      return;
+    }
     setReadyToPay(true);
   }
 
   const handlePriceOffer = () => {
-    const price = calculatePriceOffer();
+    if (
+      enteredAmountOfAccounts === undefined ||
+      enteredAmountOfAccounts === ""
+    ) {
+      setReadyToPay(false);
+      setPriceOffer(0);
+      return;
+    }
+    const price = calculatePriceOffer().toFixed(2);
     setPriceOffer(price);
-    const coins = (priceOffer / 2 / enteredAmountOfAccounts) * 23;
-    setCoinsPerUser(coins);
+    const coins = (price / 2 / enteredAmountOfAccounts) * 23;
+    setCoinsPerUser(coins.toFixed(2));
+    console.log(coins.toFixed(2));
   };
 
   async function handleSampleGroupCount() {
     // const data = await fetch(
-    //   `https://10.10.248.124:443/auth/getAccountsCountBySampleGroup?age=${encodeURIComponent(`
+    //   `https://poll-it.cs.colman.ac.il/auth/getAccountsCountBySampleGroup?age=${encodeURIComponent(`
     //     [${prePoll.age.map((item) => {
     //       return `"${item}"`;
     //     })}]`)}
@@ -144,61 +164,73 @@ const ConfirmPayment = (props) => {
     //   }
     // );
     // const accountsCount = await data.json();
-    // maxAccounts = accountsCount;
+    // setMaxAccounts(accountsCount);
     // console.log(accountsCount);
   }
 
   return (
     <div>
+      {PaymentDone && (
+        <div>
+          <Title>Thank you!</Title>
+        </div>
+      )}
       <NavigationBar />
-      <Container>
-        <Row md={6}>
-          <Col md={6}>
-            <Title>Price Offer</Title>
-            <p
-              style={{
-                fontSize: "30px",
-              }}
-            >
-              Before We Submit Your Entered Poll , we need you to give us few
-              more details and we will give you a price offer for your desired
-              poll:
-            </p>
-            <div>
-              <label>Amout of people you want to answer your poll:</label>
-              <input
-                value={enteredAmountOfAccounts}
-                onChange={(e) => setEnteredAmountOfAccount(e.target.value)}
-                onBlur={handlePriceOffer}
-              ></input>
-              <label>/</label>
-              <input disabled value={maxAccounts}></input>
-              <label>possible</label>
-            </div>
-            <br />
-            <br />
-            <div>
-              <h5>Our Proposal:</h5>
-              <label style={{ color: "orange", fontSize: "50px" }}>
-                {priceOffer}$
-              </label>
-            </div>
-            <div>
-              <button onClick={handlePayment}>
-                confirm and Procced to checkout
-              </button>
-            </div>
-            <div>
-              <p></p>
-              <CreditCard></CreditCard>
-            </div>
-          </Col>
-          <Col md={6}>
-            <Image src={PollItLogo}></Image>
-          </Col>
-        </Row>
-        <Row md={6}></Row>
-      </Container>
+      {!PaymentDone && (
+        <Container>
+          <Row md={6}>
+            <Col md={6}>
+              <Title>Price Offer</Title>
+              <p
+                style={{
+                  fontSize: "30px",
+                }}
+              >
+                Before We Submit Your Entered Poll , we need you to give us few
+                more details and we will give you a price offer for your desired
+                poll:
+              </p>
+              <div>
+                <label>Amout of people you want to answer your poll:</label>
+                <input
+                  style={{ width: "70px" }}
+                  value={enteredAmountOfAccounts}
+                  max={maxAccounts}
+                  onChange={(e) => setEnteredAmountOfAccount(e.target.value)}
+                  onBlur={handlePriceOffer}
+                ></input>
+                <label>/</label>
+                <input
+                  disabled
+                  value={maxAccounts}
+                  style={{ width: "70px" }}
+                ></input>
+                <label>possible</label>
+              </div>
+              <br />
+              <br />
+              <div>
+                <h5>Our Proposal:</h5>
+                <label style={{ color: "orange", fontSize: "50px" }}>
+                  {priceOffer}$
+                </label>
+              </div>
+              <div>
+                <button onClick={handlePayment}>
+                  confirm and Procced to checkout
+                </button>
+              </div>
+              <div>
+                {readyToPay && <CreditCard onClickPay={handleDonePayment} />}
+              </div>
+            </Col>
+            <Col md={6}>
+              <Image src={PollItLogo}></Image>
+            </Col>
+          </Row>
+          <Row md={6}></Row>
+        </Container>
+      )}
       <StickyFooter />
     </div>
   );
