@@ -13,7 +13,25 @@ const MultipleChoice = (props) => {
     answers: ["", ""],
     type: "Multi Choice",
   });
+  const [editableQuestion, setEditableQuestion] = useState(props.editQuestion);
   const [enteredQuestionName, setEnteredQuestionName] = useState("");
+  useEffect(() => {
+    if (props.editQuestion !== undefined) {
+      setEnteredQuestionName(props.editQuestion.questionName);
+    }
+  }, [props.editQuestion]);
+
+  const handleEditAnswer = (answer, index) => {
+    setEditableQuestion((prevState) => {
+      let updatedAnswers = [...prevState.answers];
+      updatedAnswers.splice(index, 1, answer);
+      return {
+        questionName: prevState.questionName,
+        answers: updatedAnswers,
+        type: prevState.type,
+      };
+    });
+  };
 
   const handleEnteredAnswers = (e, index) => {
     if (
@@ -60,6 +78,19 @@ const MultipleChoice = (props) => {
     return;
   };
 
+  const handleRemoveEditAnswer = (index) => {
+    if (editableQuestion.answers.length < 3) return;
+    setEditableQuestion((prevState) => {
+      let updatedAnswers = [...prevState.answers];
+      updatedAnswers.splice(index, 1);
+      return {
+        questionName: prevState.questionName,
+        answers: updatedAnswers,
+        type: prevState.type,
+      };
+    });
+  };
+
   const handleRemoveAnswer = (index) => {
     if (index < 2) return;
     setQuestion((prevState) => {
@@ -84,6 +115,11 @@ const MultipleChoice = (props) => {
     });
   };
 
+  const handleEditQuestion = () => {
+    console.log(editableQuestion);
+    props.onFinishEditQuestion(editableQuestion);
+  };
+
   const handleSubmitQuestion = () => {
     props.onSubmitQuestion(question);
   };
@@ -101,24 +137,53 @@ const MultipleChoice = (props) => {
         />
         <br />
       </div>
-      {question.answers.map((answer, index) => {
-        return (
-          <div>
-            <TextField
-              variant="filled"
-              label="Answer"
-              onBlur={(e) => handleEnteredAnswers(e, index)}
-            />
-            <input
-              type="button"
-              value="Remove"
-              onClick={() => handleRemoveAnswer(index)}
-            />
-          </div>
-        );
-      })}
-      <br />
-      <button onClick={handleSubmitQuestion}>Submit Question</button>
+      {!props.editQuestion &&
+        question.answers.map((answer, index) => {
+          return (
+            <div>
+              <TextField
+                variant="filled"
+                label="Answer"
+                onBlur={(e) => handleEnteredAnswers(e, index)}
+              />
+              <input
+                type="button"
+                value="Remove"
+                onClick={() => handleRemoveAnswer(index)}
+              />
+            </div>
+          );
+        })}
+      {props.editQuestion &&
+        editableQuestion.answers.map((answer, index) => {
+          return (
+            <div>
+              <TextField
+                variant="filled"
+                label="Answer"
+                value={answer}
+                onChange={(e) => handleEditAnswer(e.target.value, index)}
+              />
+              <input
+                type="button"
+                value="Remove"
+                onClick={() => handleRemoveEditAnswer(index)}
+              />
+            </div>
+          );
+        })}
+      {props.editQuestion && (
+        <>
+          <br />
+          <button onClick={handleEditQuestion}>Edit Question</button>
+        </>
+      )}
+      {!props.editQuestion && (
+        <>
+          <br />
+          <button onClick={handleSubmitQuestion}>Submit Question</button>
+        </>
+      )}
     </div>
   );
 };

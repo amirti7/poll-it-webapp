@@ -1,6 +1,5 @@
 import { PieChart } from "react-minimal-pie-chart";
 import styled from "styled-components";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
 import "bootstrap/dist/css/bootstrap.css";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -30,6 +29,36 @@ const defaultLabelStyle = {
   color: "white",
 };
 
+const colors = [
+  "#3366cc",
+  "#dc3912",
+  "#ff9900",
+  "#109618",
+  "#990099",
+  "#dd4477",
+  "#66aa00",
+  "#22aa99",
+  "#aaaa11",
+  "#6633cc",
+  "#e67300",
+  "#8b0707",
+  "#651067",
+  "#329262",
+  "#5574a6",
+  "#3b3eac",
+  "#b77322",
+  "#16d620",
+  "#b91383",
+  "#f4359e",
+  "#9c5935",
+  "#a9c413",
+  "#2a778d",
+  "#668d1c",
+  "#bea413",
+  "#0c5922",
+  "#743411",
+];
+
 const AboutUs = (props) => {
   const [userPolls, setUserPolls] = useState([]);
   const [statesFinished, setStatesFinished] = useState(false);
@@ -38,12 +67,13 @@ const AboutUs = (props) => {
   const userID = localStorage.getItem("UserId");
   const UserAccessToken = localStorage.getItem("UserAccessToken");
   const auth = "Bearer " + UserAccessToken;
+  const pic = true;
   let polls, pollQuestions, answers;
   let pollsShow;
 
   async function getData() {
     const pollsData = await fetch(
-      "https://10.10.248.124:443/poll/getPollsByClientId/" + userID,
+      "https://poll-it.cs.colman.ac.il/poll/getPollsByClientId/" + userID,
       {
         method: "GET",
         headers: {
@@ -65,7 +95,7 @@ const AboutUs = (props) => {
 
     pollsDetails.forEach(async (poll) => {
       const pollQuestionData = await fetch(
-        "https://10.10.248.124:443/poll_question/getPollQuestionsByPollId/" +
+        "https://poll-it.cs.colman.ac.il/poll_question/getPollQuestionsByPollId/" +
           poll._id,
         {
           method: "GET",
@@ -82,6 +112,7 @@ const AboutUs = (props) => {
           _id: question._id,
           pollQuestion: question.pollQuestion,
           pollQuestionType: question.pollQuestionType,
+          pollQuestionImage: question.pollQuestionImage,
           choices: question.choices,
           pollId: question.pollId,
         };
@@ -93,7 +124,7 @@ const AboutUs = (props) => {
       });
 
       const answersData = await fetch(
-        "https://10.10.248.124:443/answer/getAnswersByPollId/" + poll._id,
+        "https://poll-it.cs.colman.ac.il/answer/getAnswersByPollId/" + poll._id,
         {
           method: "GET",
           headers: {
@@ -149,14 +180,32 @@ const AboutUs = (props) => {
 
             return (
               <div>
-                <h2>{poll.pollName}</h2>
+                <h1
+                  style={{
+                    textAlign: "center",
+                    margin: "50px 0px",
+                    textDecoration: "underline",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {poll.pollName}
+                  <h3>
+                    number of participants :
+                    {filterdAnswersArr.length / filterdQuestionsArr.length}
+                  </h3>
+                </h1>
+
                 {filterdQuestionsArr.map((question) => {
                   // here will be fetch get call that brings all specific question answers from server , and then we will present
                   // each question graph based on his answers.
 
                   let dataForChart = [];
                   return (
-                    <Row md={6} key={question._id}>
+                    <Row
+                      md={6}
+                      key={question._id}
+                      style={{ borderStyle: "solid", margin: "5px 0px" }}
+                    >
                       <Col md={6}>
                         <p
                           style={{
@@ -164,6 +213,12 @@ const AboutUs = (props) => {
                           }}
                         >
                           {question.pollQuestion}
+                          {question.pollQuestionImage && (
+                            <img
+                              style={{ width: "100px" }}
+                              src={question.pollQuestionImage}
+                            ></img>
+                          )}
                         </p>
                         <div
                           style={{
@@ -171,9 +226,11 @@ const AboutUs = (props) => {
                           }}
                         >
                           {question.choices.map((choice) => {
-                            const color =
-                              "#" +
-                              Math.floor(Math.random() * 16777215).toString(16);
+                            // const color =
+                            //   "#" +
+                            //   Math.floor(Math.random() * 16777215).toString(16);
+                            var color =
+                              colors[Math.floor(Math.random() * colors.length)];
                             console.log("color ", color, "choice ", choice);
                             dataForChart.push({
                               title: choice,
@@ -184,6 +241,11 @@ const AboutUs = (props) => {
                               <div>
                                 <Box style={{ backgroundColor: `${color}` }} />
                                 {choice.toString()}
+                                {question.pollQuestionType ===
+                                  "Image Answers" && (
+                                  <img src={choice} style={{ width: "50px" }} />
+                                )}
+
                                 <br />
                               </div>
                             );

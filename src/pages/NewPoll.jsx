@@ -8,29 +8,36 @@ import ImageChoice from "../components/Questions/ImageChoice";
 import Range from "../components/Questions/Range";
 import { Button } from "react-bootstrap";
 import ImageAnswers from "../components/Questions/ImageAnswers";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
+import SyncLoader from "react-spinners/SyncLoader";
 
 const NewPoll = (props) => {
   const location = useLocation();
   const prePoll = location.state.prePoll;
   const navigate = useNavigate();
   const myRef = useRef(null);
+  const [editQuestionIndex, setEditQuestionIndex] = useState();
   const [questionToEdit, setQuestionToEdit] = useState();
   const [clickedOnEditQuestions, setClickedOnEditQuestions] = useState(false);
   const [questionToDisplay, setQuestionToDisplay] = useState("");
+  const [loading, setLoading] = useState(false);
   const [finishedQuestions, setFinishedQuestions] = useState({
-    questions: [
-      {
-        questionName: "",
-        questionPic: "",
-        answers: [],
-        type: "",
-      },
-    ],
+    questions: [],
   });
 
   const [finishedPoll, setFinishedPoll] = useState({
     questions: [],
   });
+
+  const closeLoaderIn5Seconds = (updatedPoll) => {
+    setTimeout(() => {
+      setLoading(!loading);
+      navigate("/ConfirmPayment", {
+        state: { poll: updatedPoll, prePoll: prePoll },
+      });
+    }, 3000);
+  };
 
   const handleFinishedQuestions = (question) => {
     setQuestionToDisplay("");
@@ -52,15 +59,33 @@ const NewPoll = (props) => {
     });
   };
 
-  const handleClickOnEdit = (question) => {
-    setQuestionToDisplay("multiple");
-    myRef.current();
+  const handleEditQuestion = (question, index) => {
+    setEditQuestionIndex(index);
+    setClickedOnEditQuestions(true);
+    setQuestionToEdit({
+      questionName: question.questionName,
+      questionPic: question.questionPic,
+      answers: question.answers,
+      type: question.type,
+    });
+  };
+
+  const handleFinishedEditedQuestion = (question) => {
+    setFinishedQuestions((prevState) => {
+      let updatedQuestions = [...prevState.questions];
+      updatedQuestions.splice(editQuestionIndex, 1, question);
+      console.log(updatedQuestions);
+      return {
+        questions: updatedQuestions,
+      };
+    });
+    setClickedOnEditQuestions(false);
+    setQuestionToDisplay("");
   };
 
   async function handleSubmitPoll() {
     let updatedPoll;
     let finalQuestions = finishedQuestions.questions;
-    finalQuestions.shift(0);
     updatedPoll = {
       questions: finalQuestions,
     };
@@ -70,9 +95,8 @@ const NewPoll = (props) => {
       questions: updatedPoll.questions,
     });
 
-    navigate("/ConfirmPayment", {
-      state: { poll: updatedPoll, prePoll: prePoll },
-    });
+    setLoading(true);
+    closeLoaderIn5Seconds(updatedPoll);
 
     // const accessToken = localStorage.getItem("UserAccessToken");
     // const auth = "Bearer " + accessToken;
@@ -83,7 +107,7 @@ const NewPoll = (props) => {
     //     const data = question.questionPic;
     //     let formData = new FormData();
     //     formData.append(question.questionName, data);
-    //     fetch("https://10.10.248.124:443/upload", {
+    //     fetch("https://poll-it.cs.colman.ac.il/upload", {
     //       method: "POST",
     //       body: formData,
     //       headers: {
@@ -105,7 +129,7 @@ const NewPoll = (props) => {
     //     choices: question.answers,
     //     pollId: pollId,
     //   };
-    //   fetch("https://10.10.248.124:443/poll_question/create", {
+    //   fetch("https://poll-it.cs.colman.ac.il/poll_question/create", {
     //     method: "POST",
     //     body: JSON.stringify(data),
     //     headers: {
@@ -123,13 +147,32 @@ const NewPoll = (props) => {
 
   return (
     <div>
+      <Modal
+        open={loading}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Typography
+          id="modal-modal-description"
+          sx={{ mt: 2 }}
+          style={{ position: "absolute", top: "50%", left: "40%" }}
+        >
+          <SyncLoader loading={loading} size={25} color={"#D7A136"} />
+        </Typography>
+      </Modal>
       <NavigationBar />
       <div>
         <div>
-          {finishedQuestions.questions.map((question) => {
+          {console.log(finishedQuestions)}
+          {finishedQuestions.questions.map((question, index) => {
             return (
               <div>
-                <Button variant="dark">{question.questionName}</Button>
+                <Button
+                  onClick={() => handleEditQuestion(question, index)}
+                  variant="dark"
+                >
+                  {question.questionName}
+                </Button>
               </div>
             );
           })}
@@ -157,10 +200,7 @@ const NewPoll = (props) => {
           </Dropdown.Menu>
         </Dropdown>
         {questionToDisplay === "multiple" && (
-          <MultipleChoice
-            onSubmitQuestion={handleFinishedQuestions}
-            ref={myRef}
-          />
+          <MultipleChoice onSubmitQuestion={handleFinishedQuestions} />
         )}
         {questionToDisplay === "image" && (
           <ImageChoice onSubmitQuestion={handleFinishedQuestions} />
@@ -171,14 +211,23 @@ const NewPoll = (props) => {
         )}
         {clickedOnEditQuestions && (
           <MultipleChoice
-            onSubmitQuestion={handleFinishedQuestions}
-            // onLoad={handleLoadQuestion}
+            onFinishEditQuestion={handleFinishedEditedQuestion}
+            editQuestion={questionToEdit}
             question={questionToEdit}
-            ref={myRef}
           />
         )}
       </div>
       <Button onClick={handleSubmitPoll}>Submit Poll</Button>
+      <Button
+        variant="dark"
+        style={{ marginLeft: "5px" }}
+        onClick={() => {
+          setQuestionToDisplay("");
+          setClickedOnEditQuestions(false);
+        }}
+      >
+        Cancel
+      </Button>
       <StickyFooter />
     </div>
   );
