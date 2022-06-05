@@ -10,6 +10,11 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Dropdown from "react-bootstrap/Dropdown";
 import { MultiSelect } from "react-multi-select-component";
+import SyncLoader from "react-spinners/SyncLoader";
+import PacmanLoader from "react-spinners/PacmanLoader";
+import HashLoader from "react-spinners/HashLoader";
+import MoonLoader from "react-spinners/MoonLoader";
+import { FadeLoader } from "react-spinners";
 
 const Input = styled.input`
   width: 300px;
@@ -116,11 +121,19 @@ const PrePoll = (props) => {
   const [income, setIncome] = useState([]);
   const [permanentJob, setPermanentJob] = useState([]);
   const [pollName, setPollName] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const userID = localStorage.getItem("UserId");
   let prePollData;
 
   const accessToken = localStorage.getItem("UserAccessToken");
+
+  const closeLoaderIn2Seconds = () => {
+    setTimeout(() => {
+      setLoading(!loading);
+      navigate("/NewPoll", { state: { prePoll: prePollData } }); // delete after returning the POST call
+    }, 2000);
+  };
 
   const auth = "Bearer " + accessToken;
   const [isSignedUp, setIsSignedUp] = useState({
@@ -163,9 +176,10 @@ const PrePoll = (props) => {
     const json = JSON.stringify(dataToServer);
     console.log(json);
     prePollData = json;
-    navigate("/NewPoll", { state: { prePoll: prePollData } }); // delete after returning the POST call
+    setLoading(true);
+    closeLoaderIn2Seconds();
 
-    // const data = await fetch("https://10.10.248.124:443/poll/create", {
+    // const data = await fetch("https://poll-it.cs.colman.ac.il/poll/create", {
     //   method: "POST",
     //   body: json,
     //   headers: {
@@ -203,6 +217,7 @@ const PrePoll = (props) => {
       isOpen: false,
       isSignedUp: true,
     });
+
     navigate("/NewPoll", { state: { prePoll: prePollData } });
   };
   return (
@@ -251,6 +266,20 @@ const PrePoll = (props) => {
             Close
           </Button>
         </Box>
+      </Modal>
+
+      <Modal
+        open={loading}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Typography
+          id="modal-modal-description"
+          sx={{ mt: 2 }}
+          style={{ position: "absolute", top: "50%", left: "50%" }}
+        >
+          <SyncLoader loading={loading} size={25} color={"#D7A136"} />
+        </Typography>
       </Modal>
       <NavigationBar></NavigationBar>
       <Container>

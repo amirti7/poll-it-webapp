@@ -22,6 +22,7 @@ const style = {
 
 const NavigationBar = (props) => {
   const user = localStorage.getItem("CheckedInUser");
+  const isFacebookUser = localStorage.getItem("LoggedInWithFacebook");
   const [userCheckedOut, setUserCheckedOut] = useState(false);
 
   async function signOut() {
@@ -47,14 +48,17 @@ const NavigationBar = (props) => {
 
     const json = JSON.stringify(dataToServer);
 
-    const response = await fetch("https://10.10.248.124:443/auth/logout", {
-      method: "POST",
-      body: json,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: auth,
-      },
-    });
+    const response = await fetch(
+      "https://poll-it.cs.colman.ac.il/auth/logout",
+      {
+        method: "POST",
+        body: json,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: auth,
+        },
+      }
+    );
 
     if (response.ok) {
       localStorage.removeItem("CheckedInUser");
@@ -69,14 +73,17 @@ const NavigationBar = (props) => {
 
     if (!response.ok) {
       if (response.status == 403) {
-        const res = await fetch("https://10.10.248.124:443/auth/refreshToken", {
-          method: "POST",
-          body: json,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: auth,
-          },
-        });
+        const res = await fetch(
+          "https://poll-it.cs.colman.ac.il/auth/refreshToken",
+          {
+            method: "POST",
+            body: json,
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: auth,
+            },
+          }
+        );
         resData = res;
         newData = await res.json();
       }
@@ -85,14 +92,17 @@ const NavigationBar = (props) => {
     if (resData.ok) {
       dataToServer.refreshToken = newData.refreshToken;
       const newJson = JSON.stringify(dataToServer);
-      const response = await fetch("https://10.10.248.124:443/auth/logout", {
-        method: "POST",
-        body: newJson,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + newData.accessToken,
-        },
-      });
+      const response = await fetch(
+        "https://poll-it.cs.colman.ac.il/auth/logout",
+        {
+          method: "POST",
+          body: newJson,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + newData.accessToken,
+          },
+        }
+      );
       if (response.ok) {
         localStorage.removeItem("CheckedInUser");
         localStorage.removeItem("UserAccessToken");
@@ -116,6 +126,29 @@ const NavigationBar = (props) => {
       </Nav.Item>
       <Nav.Item>
         <Nav.Link href="/signup">Sign-Up</Nav.Link>
+      </Nav.Item>
+    </>
+  );
+
+  const facebookUserLoggedIn = (
+    <>
+      <Nav.Item>
+        <Nav.Link href="/about_us">Polls</Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link href="/PrePoll">New Poll</Nav.Link>
+      </Nav.Item>
+      <Nav.Item
+        className="ms-auto"
+        style={{ color: "rgba(255, 255, 255, 0.55)" }}
+      >
+        <AccountCircleIcon />
+        {user}
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link href="" onClick={signOut}>
+          Sign Out
+        </Nav.Link>
       </Nav.Item>
     </>
   );
@@ -179,7 +212,7 @@ const NavigationBar = (props) => {
         <Nav.Item>
           <Nav.Link href="/">Home</Nav.Link>
         </Nav.Item>
-        {user ? userLoggedIn : normal}
+        {user ? (isFacebookUser ? facebookUserLoggedIn : userLoggedIn) : normal}
       </Nav>
     </Navbar>
   );
