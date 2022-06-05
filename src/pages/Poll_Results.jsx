@@ -57,6 +57,7 @@ const colors = [
   "#bea413",
   "#0c5922",
   "#743411",
+  "#11746752",
 ];
 
 const AboutUs = (props) => {
