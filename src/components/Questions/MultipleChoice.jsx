@@ -23,13 +23,25 @@ const MultipleChoice = (props) => {
 
   const handleEditAnswer = (answer, index) => {
     setEditableQuestion((prevState) => {
-      let updatedAnswers = [...prevState.answers];
-      updatedAnswers.splice(index, 1, answer);
-      return {
-        questionName: prevState.questionName,
-        answers: updatedAnswers,
-        type: prevState.type,
-      };
+      let valid = prevState.answers.includes("");
+      if (!valid) {
+        let updatedAnswers = [...prevState.answers];
+        updatedAnswers.splice(index, 1, answer);
+        updatedAnswers.push("");
+        return {
+          questionName: prevState.questionName,
+          answers: updatedAnswers,
+          type: prevState.type,
+        };
+      } else {
+        let updatedAnswers = [...prevState.answers];
+        updatedAnswers.splice(index, 1, answer);
+        return {
+          questionName: prevState.questionName,
+          answers: updatedAnswers,
+          type: prevState.type,
+        };
+      }
     });
   };
 
