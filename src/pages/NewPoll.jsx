@@ -6,18 +6,27 @@ import Dropdown from "react-bootstrap/Dropdown";
 import MultipleChoice from "../components/Questions/MultipleChoice";
 import ImageChoice from "../components/Questions/ImageChoice";
 import Range from "../components/Questions/Range";
-import { Button } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import ImageAnswers from "../components/Questions/ImageAnswers";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import SyncLoader from "react-spinners/SyncLoader";
+import styled from "styled-components";
 
+const Title = styled.p`
+  font-size: 80px;
+
+  @media (max-width: 460px) {
+    font-size: 65px;
+  }
+`;
 const NewPoll = (props) => {
   const location = useLocation();
   const prePoll = location.state.prePoll;
   const navigate = useNavigate();
   const myRef = useRef(null);
   const [editQuestionIndex, setEditQuestionIndex] = useState();
+  const [editQuestionType, setEditQuestionType] = useState();
   const [questionToEdit, setQuestionToEdit] = useState();
   const [clickedOnEditQuestions, setClickedOnEditQuestions] = useState(false);
   const [questionToDisplay, setQuestionToDisplay] = useState("");
@@ -61,6 +70,7 @@ const NewPoll = (props) => {
 
   const handleEditQuestion = (question, index) => {
     setEditQuestionIndex(index);
+    setEditQuestionType(question.type);
     setClickedOnEditQuestions(true);
     setQuestionToEdit({
       questionName: question.questionName,
@@ -162,6 +172,22 @@ const NewPoll = (props) => {
       </Modal>
       <NavigationBar />
       <div>
+        <Container>
+          <Row md={6}>
+            <Col md={6}>
+              <Title>Price Offer</Title>
+              <p
+                style={{
+                  fontSize: "30px",
+                }}
+              >
+                Before We Submit Your Entered Poll , we need you to give us few
+                more details and we will give you a price offer for your desired
+                poll:
+              </p>
+            </Col>
+          </Row>
+        </Container>
         <div>
           {console.log(finishedQuestions)}
           {finishedQuestions.questions.map((question, index) => {
@@ -194,9 +220,6 @@ const NewPoll = (props) => {
             <Dropdown.Item onClick={() => setQuestionToDisplay("ImageAnswers")}>
               Image Answers
             </Dropdown.Item>
-            <Dropdown.Item onClick={() => setQuestionToDisplay("range")}>
-              Select a value from Range
-            </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
         {questionToDisplay === "multiple" && (
@@ -205,12 +228,25 @@ const NewPoll = (props) => {
         {questionToDisplay === "image" && (
           <ImageChoice onSubmitQuestion={handleFinishedQuestions} />
         )}
-        {questionToDisplay === "range" && <Range />}
         {questionToDisplay === "ImageAnswers" && (
           <ImageAnswers onSubmitQuestion={handleFinishedQuestions} />
         )}
-        {clickedOnEditQuestions && (
+        {clickedOnEditQuestions && editQuestionType === "Multi Choice" && (
           <MultipleChoice
+            onFinishEditQuestion={handleFinishedEditedQuestion}
+            editQuestion={questionToEdit}
+            question={questionToEdit}
+          />
+        )}
+        {clickedOnEditQuestions && editQuestionType === "Image Question" && (
+          <ImageChoice
+            onFinishEditQuestion={handleFinishedEditedQuestion}
+            editQuestion={questionToEdit}
+            question={questionToEdit}
+          />
+        )}
+        {clickedOnEditQuestions && editQuestionType === "Image Answers" && (
+          <ImageAnswers
             onFinishEditQuestion={handleFinishedEditedQuestion}
             editQuestion={questionToEdit}
             question={questionToEdit}
