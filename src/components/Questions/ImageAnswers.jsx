@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import TextField from "@mui/material/TextField";
+import ImgToBase64 from "../ImgToBase64";
 
 const ImageAnswers = (props) => {
   const [question, setQuestion] = useState({
@@ -8,45 +9,35 @@ const ImageAnswers = (props) => {
     answers: ["", ""],
     type: "Image Answers",
   });
+  const [editableQuestion, setEditableQuestion] = useState(props.editQuestion);
+  const [editableAnswers, setEditableAnswers] = useState([]);
   const [enteredQuestionName, setEnteredQuestionName] = useState("");
-  const [validPicture, setValidPicture] = useState([]);
+  const [validPicture, setValidPicture] = useState([true, true]);
+  const [uploadedPictures, setUploadedPictures] = useState([false, false]);
+  const [enteredAnswer, setEnteredAnswer] = useState(["", ""]);
 
-  const isValidURL = (string, index) => {
-    let url;
-    if (string === "") {
-      setValidPicture((prevState) => {
-        const updatedvalidation = [...prevState, (prevState[index] = false)];
-        return updatedvalidation;
-      });
-      return;
+  useEffect(() => {
+    if (props.editQuestion !== undefined) {
+      setEnteredQuestionName(props.editQuestion.questionName);
+      setEditableAnswers(props.editQuestion.answers);
     }
-    try {
-      url = new URL(string);
-    } catch (_) {
-      setValidPicture((prevState) => {
-        const updatedvalidation = [...prevState, (prevState[index] = false)];
-        return updatedvalidation;
-      });
-      return;
-    }
-    setValidPicture((prevState) => {
-      const updatedvalidation = [...prevState, (prevState[index] = true)];
-      return updatedvalidation;
-    });
-    return;
-  };
+  }, [props.editQuestion]);
 
-  const handleEnteredAnswers = (e, index) => {
-    isValidURL(e.target.value, index);
-    console.log(validPicture);
+  const handleEditAnswer = (answer, index) => {
+    isValidURL(answer, index);
     if (
-      question.answers[index] !== "" &&
-      question.answers[index] !== e.target.value &&
-      question.answers[question.answers.length - 1] === ""
+      editableQuestion.answers[index] !== "" &&
+      editableQuestion.answers[index] !== answer &&
+      editableQuestion.answers[editableQuestion.answers.length - 1] === ""
     ) {
-      setQuestion((prevState) => {
+      setEditableAnswers((prevState) => {
+        let updatedAnswers = [...prevState];
+        updatedAnswers.splice(index, 1, answer);
+        return updatedAnswers;
+      });
+      setEditableQuestion((prevState) => {
         let updatedAnswers = [...prevState.answers];
-        updatedAnswers.splice(index, 1, e.target.value);
+        updatedAnswers.splice(index, 1, answer);
         return {
           questionName: prevState.questionName,
           answers: updatedAnswers,
@@ -55,13 +46,122 @@ const ImageAnswers = (props) => {
       });
       return;
     }
-    if (e.target.value === "") return;
-    if (question.answers[index] === e.target.value) return;
+    if (answer === "") return;
+    if (editableQuestion.answers[index] === answer) return;
+
+    if (index === 0) {
+      setEditableQuestion((prevState) => {
+        let updatedAnswers = [...prevState.answers];
+        updatedAnswers.splice(index, 1, answer);
+        return {
+          questionName: prevState.questionName,
+          answers: updatedAnswers,
+          type: prevState.type,
+        };
+      });
+      return;
+    }
+
+    setEditableQuestion((prevState) => {
+      let updatedAnswers = [...prevState.answers];
+      updatedAnswers.splice(index, 1, answer, "");
+      setValidPicture((prevState) => {
+        let updatedvalidation = [...prevState];
+        updatedvalidation.push(true);
+        return updatedvalidation;
+      });
+      return {
+        questionName: prevState.questionName,
+        answers: updatedAnswers,
+        type: prevState.type,
+      };
+    });
+    return;
+  };
+
+  const handleRemoveEditAnswer = (index) => {
+    if (editableQuestion.answers.length < 3) return;
+    setEditableQuestion((prevState) => {
+      let updatedAnswers = [...prevState.answers];
+      updatedAnswers.splice(index, 1);
+      return {
+        questionName: prevState.questionName,
+        answers: updatedAnswers,
+        type: prevState.type,
+      };
+    });
+  };
+
+  const isValidURL = (string, index) => {
+    debugger;
+    let url;
+    if (string === "" && !editableQuestion) {
+      setValidPicture((prevState) => {
+        let updatedvalidation = [...prevState];
+        updatedvalidation.splice(index, 1, true);
+        return updatedvalidation;
+      });
+      return;
+    }
+    if (
+      string.match(/^http[^\?]*.(jpg|jpeg|gif|png|tiff|bmp)(\?(.*))?$/gim) ||
+      string.includes("base64")
+    ) {
+      setValidPicture((prevState) => {
+        let updatedvalidation = [...prevState];
+        updatedvalidation.splice(index, 1, true);
+        return updatedvalidation;
+      });
+    } else {
+      setValidPicture((prevState) => {
+        let updatedvalidation = [...prevState];
+        updatedvalidation.splice(index, 1, false);
+        return updatedvalidation;
+      });
+      return;
+    }
+  };
+
+  // const handleAnswer = (e) => {
+  //   if (typeof e === "object") {
+  //     const finalPath = e.target.value;
+  //     setEnteredAnswer(finalPath);
+  //   } else {
+  //     const finalPath = e;
+  //     setEnteredAnswer(finalPath);
+  //   }
+  // };
+
+  const handleEnteredAnswers = (e, index) => {
+    let url;
+    if (typeof e === "object") {
+      url = e.target.value;
+    } else url = e;
+    isValidURL(url, index);
+    console.log(validPicture);
+    if (
+      question.answers[index] !== "" &&
+      question.answers[index] !== url &&
+      question.answers[question.answers.length - 1] === ""
+    ) {
+      setQuestion((prevState) => {
+        let updatedAnswers = [...prevState.answers];
+        updatedAnswers.splice(index, 1, url);
+        return {
+          questionName: prevState.questionName,
+          answers: updatedAnswers,
+          type: prevState.type,
+        };
+      });
+      return;
+    }
+    if (url === "") return;
+    if (question.answers[index] === url) return;
 
     if (index === 0) {
       setQuestion((prevState) => {
         let updatedAnswers = [...prevState.answers];
-        updatedAnswers.splice(index, 1, e.target.value);
+        updatedAnswers.splice(index, 1, url);
         return {
           questionName: prevState.questionName,
           answers: updatedAnswers,
@@ -73,7 +173,12 @@ const ImageAnswers = (props) => {
 
     setQuestion((prevState) => {
       let updatedAnswers = [...prevState.answers];
-      updatedAnswers.splice(index, 1, e.target.value, "");
+      updatedAnswers.splice(index, 1, url, "");
+      setValidPicture((prevState) => {
+        let updatedvalidation = [...prevState];
+        updatedvalidation.push(true);
+        return updatedvalidation;
+      });
       return {
         questionName: prevState.questionName,
         answers: updatedAnswers,
@@ -94,21 +199,144 @@ const ImageAnswers = (props) => {
         type: prevState.type,
       };
     });
-  };
-
-  const handleQuestionName = (e) => {
-    setEnteredQuestionName(e.target.value);
-    setQuestion((prevState) => {
-      return {
-        questionName: e.target.value,
-        answers: [...prevState.answers],
-        type: prevState.type,
-      };
+    setValidPicture((prevState) => {
+      let updatedValidPictures = [...prevState];
+      updatedValidPictures.splice(index, 1);
+      return updatedValidPictures;
     });
   };
 
+  const handleQuestionName = (e) => {
+    if (!editableQuestion) {
+      setEnteredQuestionName(e.target.value);
+      setQuestion((prevState) => {
+        return {
+          questionName: e.target.value,
+          answers: [...prevState.answers],
+          type: prevState.type,
+        };
+      });
+    } else {
+      setEnteredQuestionName(e.target.value);
+      setEditableQuestion((prevState) => {
+        return {
+          questionName: e.target.value,
+          answers: prevState.answers,
+          type: prevState.type,
+        };
+      });
+    }
+  };
+
+  const handleClearPicture = (index) => {
+    if (!editableQuestion) {
+      setQuestion((prevState) => {
+        let updatedAnswers = [...prevState.answers];
+        updatedAnswers.splice(index, 1, "");
+        return {
+          questionName: prevState.questionName,
+          answers: updatedAnswers,
+          type: prevState.type,
+        };
+      });
+    } else {
+      setEditableQuestion((prevState) => {
+        let updatedAnswers = [...prevState.answers];
+        updatedAnswers.splice(index, 1, "");
+        return {
+          questionName: prevState.questionName,
+          answers: updatedAnswers,
+          type: prevState.type,
+        };
+      });
+    }
+    setUploadedPictures((prevState) => {
+      let updatedLoadedPictures = [...prevState];
+      updatedLoadedPictures.splice(index, 1, false);
+      return updatedLoadedPictures;
+    });
+    // document.getElementById(`image-input${index}`).children.value = null;
+  };
+
   const handleSubmitQuestion = () => {
-    props.onSubmitQuestion(question);
+    console.log(question);
+    debugger;
+    let isValidAnswers = validPicture.every((ans) => {
+      if (ans === false) return false;
+      else return true;
+    });
+    let noEmptyAnswers = question.answers.every((ans) => {
+      if (ans === "") return false;
+      else return true;
+    });
+    if (isValidAnswers && noEmptyAnswers && enteredQuestionName !== "") {
+      props.onSubmitQuestion(question);
+      return;
+    }
+    return;
+  };
+
+  const handleEditQuestion = () => {
+    let isValidAnswers = validPicture.every((ans) => {
+      if (ans === false) return false;
+      else return true;
+    });
+    let noEmptyAnswers = editableQuestion.answers.every((ans) => {
+      if (ans === "") return false;
+      else return true;
+    });
+    if (isValidAnswers && noEmptyAnswers && enteredQuestionName !== "") {
+      console.log(editableQuestion);
+      props.onFinishEditQuestion(editableQuestion);
+      return;
+    }
+    return;
+  };
+
+  const imgTo64Base = (img, index) => {
+    setUploadedPictures((prevState) => {
+      let updatedPictures = [...prevState];
+      updatedPictures.splice(index, 1, true);
+      return updatedPictures;
+    });
+    setValidPicture((prevState) => {
+      let updatedValidaPictures = [...prevState];
+      updatedValidaPictures.splice(index, 1, true);
+      return updatedValidaPictures;
+    });
+    if (!editableQuestion) {
+      setQuestion((prevState) => {
+        let updatedAnswers = [...prevState.answers];
+        updatedAnswers.splice(index, 1, img);
+        if (!updatedAnswers.includes("")) {
+          updatedAnswers.push("");
+          setValidPicture((prevState) => {
+            let updatedValidaPictures = [...prevState];
+            updatedValidaPictures.splice(
+              updatedValidaPictures.length - 1,
+              1,
+              true
+            );
+            return updatedValidaPictures;
+          });
+        }
+        return {
+          questionName: prevState.questionName,
+          answers: updatedAnswers,
+          type: prevState.type,
+        };
+      });
+    } else {
+      setEditableQuestion((prevState) => {
+        let updatedAnswers = [...prevState.answers];
+        updatedAnswers.splice(index, 1, img);
+        return {
+          questionName: prevState.questionName,
+          answers: updatedAnswers,
+          type: prevState.type,
+        };
+      });
+    }
   };
 
   return (
@@ -124,26 +352,79 @@ const ImageAnswers = (props) => {
         />
         <br />
       </div>
-      {question.answers.map((answer, index) => {
-        return (
-          <div>
-            <TextField
-              error={!validPicture[index]}
-              variant="filled"
-              label="Answer"
-              onBlur={(e) => handleEnteredAnswers(e, index)}
-              helperText={!validPicture[index] && " URL is not Valid"}
-            />
-            <input
-              type="button"
-              value="Remove"
-              onClick={() => handleRemoveAnswer(index)}
-            />
-          </div>
-        );
-      })}
+
+      {!props.editQuestion &&
+        question.answers.map((answer, index) => {
+          return (
+            <div>
+              {!uploadedPictures[index] && (
+                <TextField
+                  error={!validPicture[index]}
+                  variant="filled"
+                  label="Answer"
+                  onBlur={(e) => handleEnteredAnswers(e, index)}
+                  helperText={!validPicture[index] && " URL is not Valid"}
+                />
+              )}
+              <label>Or Upload image:</label>
+              <ImgToBase64 index={index} setImage={imgTo64Base} />
+
+              {uploadedPictures[index] && (
+                <>
+                  <p style={{ color: "green" }}>picture has been uploaded!</p>
+                  <button onClick={() => handleClearPicture(index)}>
+                    clear Picture
+                  </button>
+                </>
+              )}
+              <input
+                type="button"
+                value="Remove"
+                onClick={() => handleRemoveAnswer(index)}
+              />
+            </div>
+          );
+        })}
+
+      {props.editQuestion &&
+        editableQuestion.answers.map((answer, index) => {
+          return (
+            <div>
+              <TextField
+                variant="filled"
+                label="Answer"
+                value={answer}
+                onChange={(e) => handleEditAnswer(e.target.value, index)}
+              />
+              <label>Or Upload image:</label>
+              <ImgToBase64 index={index} setImage={imgTo64Base} />
+              {uploadedPictures[index] && (
+                <>
+                  <p style={{ color: "green" }}>picture has been uploaded!</p>
+                  <button onClick={handleClearPicture}>clear Picture</button>
+                </>
+              )}
+              <input
+                type="button"
+                value="Remove"
+                onClick={() => handleRemoveEditAnswer(index)}
+              />
+            </div>
+          );
+        })}
       <br />
-      <button onClick={handleSubmitQuestion}>Submit Question</button>
+      {props.editQuestion && (
+        <>
+          <br />
+          <button onClick={handleEditQuestion}>Edit Question</button>
+        </>
+      )}
+      {!props.editQuestion && (
+        <>
+          <br />
+          <button onClick={handleSubmitQuestion}>Submit Question</button>
+        </>
+      )}
     </div>
   );
 };
