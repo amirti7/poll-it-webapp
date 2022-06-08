@@ -1,6 +1,5 @@
 import React from "react";
 import Card from "react-credit-cards";
-import Confetti from "react-confetti";
 import {
   formatCreditCardNumber,
   formatCVC,
@@ -87,7 +86,6 @@ export default class App extends React.Component {
                 onChange={this.handleInputChange}
                 onFocus={this.handleInputFocus}
               />
-              <small>E.g.: 49..., 51..., 36..., 37...</small>
             </div>
             <p></p>
             <div className="form-group">
@@ -131,15 +129,9 @@ export default class App extends React.Component {
             <input type="hidden" name="issuer" value={issuer} />
             <p></p>
             <div className="form-actions">
-              <button className="btn btn-primary btn-block">PAY</button>
+              <button onClick={this.props.onClickPay}>PAY</button>
             </div>
           </form>
-          {formData && (
-            <div>
-              <Confetti />
-              <big>payment done!</big>
-            </div>
-          )}
         </div>
       </div>
     );

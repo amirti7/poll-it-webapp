@@ -6,6 +6,7 @@ import { useState } from "react";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { newAccessToken } from "../components/Utils";
 
 const style = {
   position: "absolute",
@@ -36,7 +37,7 @@ const NavigationBar = (props) => {
       setUserCheckedOut(true);
       return;
     }
-    let newData, resData;
+    let resData;
 
     const dataToServer = {
       refreshToken: localStorage.getItem("UserRefreshToken"),
@@ -73,24 +74,14 @@ const NavigationBar = (props) => {
 
     if (!response.ok) {
       if (response.status == 403) {
-        const res = await fetch(
-          "https://poll-it.cs.colman.ac.il/auth/refreshToken",
-          {
-            method: "POST",
-            body: json,
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: auth,
-            },
-          }
-        );
-        resData = res;
-        newData = await res.json();
+        resData = await newAccessToken();
       }
     }
 
     if (resData.ok) {
-      dataToServer.refreshToken = newData.refreshToken;
+      let newData = localStorage.getItem("UserRefreshToken");
+      let newAccess = localStorage.getItem("UserAccessToken");
+      dataToServer.refreshToken = newData;
       const newJson = JSON.stringify(dataToServer);
       const response = await fetch(
         "https://poll-it.cs.colman.ac.il/auth/logout",
@@ -99,7 +90,7 @@ const NavigationBar = (props) => {
           body: newJson,
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + newData.accessToken,
+            Authorization: "Bearer " + newAccess,
           },
         }
       );

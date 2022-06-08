@@ -202,6 +202,7 @@ const ImageChoice = (props) => {
   const handleQuestionPic = (e) => {
     if (typeof e === "object") {
       const finalPath = e.target.value;
+      setEnteredQuestionPic(finalPath);
       if (!isImgLink(finalPath)) {
         setValidPicture(false);
         setEnteredQuestionPic("");

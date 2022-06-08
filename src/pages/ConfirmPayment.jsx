@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import PollItLogo from "../assets/images/Logo.png";
 import styled from "styled-components";
+import Confetti from "react-confetti";
 
 const Image = styled.img`
   @media (max-width: 767px) {
@@ -33,7 +34,10 @@ const Title = styled.p`
 const ConfirmPayment = (props) => {
   const location = useLocation();
   const updatedPoll = location.state.poll;
-  const prePoll = JSON.parse(location.state.prePoll);
+  let prePollToGet = JSON.parse(location.state.prePoll);
+  // const prePoll = location.state.prePoll;
+  let imgQuestion = null;
+  let imgAnswers = [];
   const UserAccessToken = localStorage.getItem("UserAccessToken");
   const auth = "Bearer " + UserAccessToken;
   const [enteredAmountOfAccounts, setEnteredAmountOfAccount] = useState();
@@ -42,15 +46,122 @@ const ConfirmPayment = (props) => {
   const [readyToPay, setReadyToPay] = useState(false);
   const [coinsPerUser, setCoinsPerUser] = useState(0);
   const [PaymentDone, setPaymentDone] = useState(false);
+  const [error, setError] = useState("");
 
   console.log(updatedPoll);
-  console.log(prePoll);
+  console.log(prePollToGet);
+  // console.log(prePoll);
 
   useEffect(() => {
     handleSampleGroupCount();
   }, []);
 
-  const handleDonePayment = () => {
+  const handleDonePayment = async () => {
+    debugger;
+    Object.assign(prePollToGet, {
+      coins: coinsPerUser,
+      maxUsers: enteredAmountOfAccounts,
+    });
+    console.log(prePollToGet);
+
+    const json = JSON.stringify(prePollToGet);
+    console.log(json);
+
+    const data = await fetch("https://poll-it.cs.colman.ac.il/poll/create", {
+      method: "POST",
+      body: json,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: auth,
+      },
+    });
+
+    //new access token
+
+    console.log(data);
+    const pollId = await data.json();
+
+    updatedPoll.questions.forEach((question) => {
+      console.log(question);
+      if (question.type === "Image Question") {
+        const data = question.questionPic;
+
+        if (question.questionPic.includes("base64")) {
+          const imageData = {
+            file: question.questionPic,
+          };
+          const json = JSON.stringify(imageData);
+          fetch("https://poll-it.cs.colman.ac.il/uploadBase64", {
+            method: "POST",
+            body: json,
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: auth,
+            },
+          })
+            .then((response) => {
+              response.json();
+            })
+            .then((data) => {
+              console.log("data", data);
+              imgQuestion = data;
+            });
+        }
+      } else if (question.type === "Image Answers") {
+        let imgUrl;
+        question.answers.map((answer) => {
+          if (answer.includes("base64")) {
+            const imageData = {
+              file: answer,
+            };
+            const json = JSON.stringify(imageData);
+            fetch("https://poll-it.cs.colman.ac.il/uploadBase64", {
+              method: "POST",
+              body: json,
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: auth,
+              },
+            })
+              .then((response) => {
+                response.json();
+              })
+              .then((data) => console.log(data));
+          }
+        });
+      }
+      let data;
+      if (imgQuestion != null) {
+        data = {
+          pollQuestion: question.questionName,
+          pollQuestionType: question.type,
+          pollQuestionImage: imgQuestion,
+          choices: question.answers,
+          pollId: pollId,
+        };
+      } else {
+        data = {
+          pollQuestion: question.questionName,
+          pollQuestionType: question.type,
+          pollQuestionImage: question.questionPic,
+          choices: question.answers,
+          pollId: pollId,
+        };
+      }
+      fetch("https://poll-it.cs.colman.ac.il/poll_question/create", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: auth,
+        },
+      })
+        .then((response) => {
+          const res = response.json();
+          console.log(res);
+        })
+        .then((data) => console.log(data));
+    });
     setPaymentDone(true);
   };
 
@@ -62,11 +173,11 @@ const ConfirmPayment = (props) => {
     if (numOfQuestions != 1) {
       price = 1;
       // Age/Gender
-      if (prePoll.age.length != 9 || prePoll.gender.length != 3) {
+      if (prePollToGet.age.length != 9 || prePollToGet.gender.length != 3) {
         price += 0.5;
       }
     } else {
-      if (prePoll.age.length != 9 || prePoll.gender.length != 3) {
+      if (prePollToGet.age.length != 9 || prePollToGet.gender.length != 3) {
         price += 0.05;
       }
     }
@@ -75,8 +186,8 @@ const ConfirmPayment = (props) => {
 
     // Maritial/Children
     if (
-      prePoll.maritalStatus.length != 5 ||
-      prePoll.numberOfChildrens.length != 7
+      prePollToGet.maritalStatus.length != 5 ||
+      prePollToGet.numberOfChildrens.length != 7
     ) {
       if (numOfQuestions > 5) {
         price += 1;
@@ -87,9 +198,9 @@ const ConfirmPayment = (props) => {
 
     // Job/Income/Studies
     if (
-      prePoll.permanentJob.length != 2 ||
-      prePoll.income.length != 5 ||
-      prePoll.educationLevel.length != 6
+      prePollToGet.permanentJob.length != 2 ||
+      prePollToGet.income.length != 5 ||
+      prePollToGet.educationLevel.length != 6
     ) {
       if (numOfQuestions > 5) {
         price += 1;
@@ -106,10 +217,13 @@ const ConfirmPayment = (props) => {
       enteredAmountOfAccounts === undefined ||
       enteredAmountOfAccounts === "" ||
       enteredAmountOfAccounts === "0" ||
+      enteredAmountOfAccounts > maxAccounts ||
       parseInt(enteredAmountOfAccounts) === 0
     ) {
+      setError("Please fill in valid number!");
       return;
     }
+    setError("");
     setReadyToPay(true);
   }
 
@@ -117,123 +231,139 @@ const ConfirmPayment = (props) => {
     if (
       enteredAmountOfAccounts === undefined ||
       enteredAmountOfAccounts === "" ||
+      enteredAmountOfAccounts > maxAccounts ||
       enteredAmountOfAccounts === "0"
     ) {
+      setError("Please fill in valid number!");
       setReadyToPay(false);
       setPriceOffer(0);
       return;
     }
+    setError("");
     const price = calculatePriceOffer().toFixed(2);
     setPriceOffer(price);
     const coins = (price / 2 / enteredAmountOfAccounts) * 23;
-    setCoinsPerUser(coins.toFixed(2));
-    console.log(coins.toFixed(2));
+    setCoinsPerUser(Math.round(coins));
+    console.log(Math.round(coins));
   };
 
   async function handleSampleGroupCount() {
-    // const data = await fetch(
-    //   `https://poll-it.cs.colman.ac.il/auth/getAccountsCountBySampleGroup?age=${encodeURIComponent(`
-    //     [${prePoll.age.map((item) => {
-    //       return `"${item}"`;
-    //     })}]`)}
-    //     &gender=${encodeURIComponent(
-    //       `[${prePoll.gender.map((item) => {
-    //         return `"${item}"`;
-    //       })}]`
-    //     )}
-    //     &educationLevel=${encodeURIComponent(
-    //       `[${prePoll.educationLevel.map((item) => {
-    //         return `"${item}"`;
-    //       })}]`
-    //     )}
-    //     &numberOfChildrens=${encodeURIComponent(
-    //       `[${prePoll.numberOfChildrens.map((item) => {
-    //         return `"${item}"`;
-    //       })}]`
-    //     )}&permanentJob=${encodeURIComponent(
-    //     `[${prePoll.permanentJob.map((item) => {
-    //       return `"${item}"`;
-    //     })}]`
-    //   )}&income=${encodeURIComponent(
-    //     `[${prePoll.income.map((item) => {
-    //       return `"${item}"`;
-    //     })}]`
-    //   )}`,
-    //   {
-    //     method: "GET",
-    //     headers: {
-    //       Authorization: auth,
-    //     },
-    //   }
-    // );
-    // const accountsCount = await data.json();
-    // setMaxAccounts(accountsCount);
-    // console.log(accountsCount);
+    const data = await fetch(
+      `https://poll-it.cs.colman.ac.il/auth/getAccountsCountBySampleGroup?age=${encodeURIComponent(`
+        [${prePollToGet.age.map((item) => {
+          return `"${item}"`;
+        })}]`)}
+        &gender=${encodeURIComponent(
+          `[${prePollToGet.gender.map((item) => {
+            return `"${item}"`;
+          })}]`
+        )}
+        &educationLevel=${encodeURIComponent(
+          `[${prePollToGet.educationLevel.map((item) => {
+            return `"${item}"`;
+          })}]`
+        )}
+        &numberOfChildrens=${encodeURIComponent(
+          `[${prePollToGet.numberOfChildrens.map((item) => {
+            return `"${item}"`;
+          })}]`
+        )}&permanentJob=${encodeURIComponent(
+        `[${prePollToGet.permanentJob.map((item) => {
+          return `"${item}"`;
+        })}]`
+      )}&income=${encodeURIComponent(
+        `[${prePollToGet.income.map((item) => {
+          return `"${item}"`;
+        })}]`
+      )}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: auth,
+        },
+      }
+    );
+    const accountsCount = await data.json();
+    setMaxAccounts(accountsCount.accountsCount);
+    console.log(accountsCount);
   }
 
   return (
     <div>
-      {PaymentDone && (
-        <div>
-          <Title>Thank you!</Title>
-        </div>
-      )}
       <NavigationBar />
-      {!PaymentDone && (
-        <Container>
-          <Row md={6}>
-            <Col md={6}>
-              <Title>Price Offer</Title>
-              <p
-                style={{
-                  fontSize: "30px",
-                }}
-              >
-                Before We Submit Your Entered Poll , we need you to give us few
-                more details and we will give you a price offer for your desired
-                poll:
-              </p>
-              <div>
-                <label>Amout of people you want to answer your poll:</label>
-                <input
-                  style={{ width: "70px" }}
-                  value={enteredAmountOfAccounts}
-                  max={maxAccounts}
-                  onChange={(e) => setEnteredAmountOfAccount(e.target.value)}
-                  onBlur={handlePriceOffer}
-                ></input>
-                <label>/</label>
-                <input
-                  disabled
-                  value={maxAccounts}
-                  style={{ width: "70px" }}
-                ></input>
-                <label>possible</label>
-              </div>
+      <Container>
+        <Row md={6}>
+          <Col md={6}>
+            <Title>Price Offer</Title>
+            <p
+              style={{
+                fontSize: "30px",
+              }}
+            >
+              Before We Submit Your Entered Poll , we need you to give us few
+              more details and we will give you a price offer for your desired
+              poll:
+            </p>
+            <div>
+              <label>Amout of people you want to answer your poll:</label>
+              <input
+                style={{ width: "70px" }}
+                value={enteredAmountOfAccounts}
+                max={maxAccounts}
+                onChange={(e) => setEnteredAmountOfAccount(e.target.value)}
+                onBlur={handlePriceOffer}
+              ></input>
+              <label>/</label>
+              <input
+                disabled
+                value={maxAccounts}
+                style={{ width: "70px" }}
+              ></input>
+              <label>possible</label>
+            </div>
+            {error && (
+              <>
+                <p style={{ color: "red" }}>{error}</p>
+              </>
+            )}
+
+            <br />
+            <br />
+            <div>
+              <h5>Our Proposal:</h5>
+              <label style={{ color: "orange", fontSize: "50px" }}>
+                {priceOffer}$
+              </label>
+            </div>
+            <div>
+              <button onClick={handlePayment}>
+                confirm and Procced to checkout
+              </button>
+            </div>
+            <div>
               <br />
-              <br />
-              <div>
-                <h5>Our Proposal:</h5>
-                <label style={{ color: "orange", fontSize: "50px" }}>
-                  {priceOffer}$
-                </label>
-              </div>
-              <div>
-                <button onClick={handlePayment}>
-                  confirm and Procced to checkout
-                </button>
-              </div>
-              <div>
-                {readyToPay && <CreditCard onClickPay={handleDonePayment} />}
-              </div>
-            </Col>
-            <Col md={6}>
-              <Image src={PollItLogo}></Image>
-            </Col>
-          </Row>
-          <Row md={6}></Row>
-        </Container>
-      )}
+              {readyToPay && <CreditCard onClickPay={handleDonePayment} />}
+              {PaymentDone && (
+                <div>
+                  <Confetti />
+                  <big
+                    style={{
+                      color: "green",
+                    }}
+                  >
+                    payment done!
+                  </big>
+                </div>
+              )}
+            </div>
+          </Col>
+          <Col md={6}>
+            <Image src={PollItLogo}></Image>
+          </Col>
+        </Row>
+        <Row md={6}></Row>
+      </Container>
+
       <StickyFooter />
     </div>
   );

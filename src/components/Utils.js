@@ -60,5 +60,39 @@ export function formatExpirationDate(value) {
 }
 
 export function formatFormData(data) {
-  return Object.keys(data).map(d => `${d}: ${data[d]}`);
+  return Object.keys(data).map((d) => `${d}: ${data[d]}`);
+}
+
+export async function newAccessToken() {
+  console.log("New Refresh Token Function");
+  let parsedData, resData;
+
+  const dataToServer = {
+    refreshToken: localStorage.getItem("UserRefreshToken"),
+  };
+
+  const access = localStorage.getItem("UserAccessToken");
+
+  const auth = "Bearer " + access;
+
+  const json = JSON.stringify(dataToServer);
+
+  const res = await fetch("https://poll-it.cs.colman.ac.il/auth/refreshToken", {
+    method: "POST",
+    body: json,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: auth,
+    },
+  });
+  parsedData = await res.json();
+
+  if (res.ok) {
+    console.log("Update Tokens");
+    localStorage.setItem("UserRefreshToken", parsedData.refreshToken);
+    localStorage.setItem("UserAccessToken", parsedData.accessToken);
+    return res;
+  } else {
+    console.log("New Token Error");
+  }
 }

@@ -12,12 +12,28 @@ import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import SyncLoader from "react-spinners/SyncLoader";
 import styled from "styled-components";
+import PollItLogo from "../assets/images/Logo.png";
 
 const Title = styled.p`
   font-size: 80px;
 
   @media (max-width: 460px) {
     font-size: 65px;
+  }
+`;
+
+const Image = styled.img`
+  @media (max-width: 767px) {
+    width: 300px;
+    height: 300px;
+  }
+  @media (max-width: 400px) {
+    width: 300px;
+    height: 300px;
+  }
+  @media (max-width: 1600px) {
+    width: 450px;
+    height: 450px;
   }
 `;
 const NewPoll = (props) => {
@@ -175,36 +191,112 @@ const NewPoll = (props) => {
         <Container>
           <Row md={6}>
             <Col md={6}>
-              <Title>Price Offer</Title>
+              <Title>Create New Poll</Title>
               <p
                 style={{
                   fontSize: "30px",
                 }}
               >
-                Before We Submit Your Entered Poll , we need you to give us few
-                more details and we will give you a price offer for your desired
-                poll:
+                Before We Submit Your Entered Poll , please fill in your Poll
+                Questions: you have 3 poll options (regular multiple Questions , question with image , answers with images), mix them as you wish and have fun!
               </p>
+            </Col>
+            <Col md={6}>
+              <Image src={PollItLogo}></Image>
+            </Col>
+          </Row>
+
+          <div>
+            {console.log(finishedQuestions)}
+            {finishedQuestions.questions.map((question, index) => {
+              return (
+                <div>
+                  <Button
+                    onClick={() => handleEditQuestion(question, index)}
+                    variant="dark"
+                  >
+                    {question.questionName}
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+          <Row md={6}>
+            <Col md={6}>
+              <div>
+                <Dropdown>
+                  <Dropdown.Toggle variant="success" id="dropdown-basic">
+                    Question Type:
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    <Dropdown.Item
+                      onClick={() => setQuestionToDisplay("multiple")}
+                    >
+                      Multiple answers-one choice
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() => setQuestionToDisplay("image")}
+                    >
+                      Image Question
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() => setQuestionToDisplay("ImageAnswers")}
+                    >
+                      Image Answers
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+                {questionToDisplay === "multiple" && (
+                  <MultipleChoice onSubmitQuestion={handleFinishedQuestions} />
+                )}
+                {questionToDisplay === "image" && (
+                  <ImageChoice onSubmitQuestion={handleFinishedQuestions} />
+                )}
+                {questionToDisplay === "ImageAnswers" && (
+                  <ImageAnswers onSubmitQuestion={handleFinishedQuestions} />
+                )}
+                {clickedOnEditQuestions &&
+                  editQuestionType === "Multi Choice" && (
+                    <MultipleChoice
+                      onFinishEditQuestion={handleFinishedEditedQuestion}
+                      editQuestion={questionToEdit}
+                      question={questionToEdit}
+                    />
+                  )}
+                {clickedOnEditQuestions &&
+                  editQuestionType === "Image Question" && (
+                    <ImageChoice
+                      onFinishEditQuestion={handleFinishedEditedQuestion}
+                      editQuestion={questionToEdit}
+                      question={questionToEdit}
+                    />
+                  )}
+                {clickedOnEditQuestions &&
+                  editQuestionType === "Image Answers" && (
+                    <ImageAnswers
+                      onFinishEditQuestion={handleFinishedEditedQuestion}
+                      editQuestion={questionToEdit}
+                      question={questionToEdit}
+                    />
+                  )}
+              </div>
+              <Button onClick={handleSubmitPoll}>Submit Poll</Button>
+              <Button
+                variant="dark"
+                style={{ marginLeft: "5px" }}
+                onClick={() => {
+                  setQuestionToDisplay("");
+                  setClickedOnEditQuestions(false);
+                }}
+              >
+                Cancel
+              </Button>
             </Col>
           </Row>
         </Container>
-        <div>
-          {console.log(finishedQuestions)}
-          {finishedQuestions.questions.map((question, index) => {
-            return (
-              <div>
-                <Button
-                  onClick={() => handleEditQuestion(question, index)}
-                  variant="dark"
-                >
-                  {question.questionName}
-                </Button>
-              </div>
-            );
-          })}
-        </div>
       </div>
-      <div style={{ marginTop: "10px" }}>
+      {/* <div style={{ marginTop: "10px" }}>
         <Dropdown>
           <Dropdown.Toggle variant="success" id="dropdown-basic">
             Question Type:
@@ -263,7 +355,7 @@ const NewPoll = (props) => {
         }}
       >
         Cancel
-      </Button>
+      </Button> */}
       <StickyFooter />
     </div>
   );

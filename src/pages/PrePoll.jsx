@@ -15,6 +15,8 @@ import PacmanLoader from "react-spinners/PacmanLoader";
 import HashLoader from "react-spinners/HashLoader";
 import MoonLoader from "react-spinners/MoonLoader";
 import { FadeLoader } from "react-spinners";
+import TextField from "@mui/material/TextField";
+import ImgToBase64 from "../components/ImgToBase64";
 
 const Input = styled.input`
   width: 300px;
@@ -122,6 +124,10 @@ const PrePoll = (props) => {
   const [permanentJob, setPermanentJob] = useState([]);
   const [pollName, setPollName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [validPicture, setValidPicture] = useState(true);
+  const [uploadedPic, setUploadedPic] = useState(false);
+  const [enteredPollPic, setEnteredPollPic] = useState("");
+
   const navigate = useNavigate();
   const userID = localStorage.getItem("UserId");
   let prePollData;
@@ -154,7 +160,8 @@ const PrePoll = (props) => {
       numOfKids.length === 0 ||
       income.length === 0 ||
       permanentJob.length === 0 ||
-      pollName.trim() === ""
+      pollName.trim() === "" ||
+      enteredPollPic === ""
     ) {
       setErrorInSignUp({
         isOpen: true,
@@ -165,6 +172,7 @@ const PrePoll = (props) => {
     const dataToServer = {
       pollName: pollName,
       accountId: userID,
+      image: enteredPollPic,
       age: ageRange.map((item) => item.value),
       gender: gender.map((item) => item.value),
       educationLevel: educationLevel.map((item) => item.value),
@@ -204,6 +212,81 @@ const PrePoll = (props) => {
     //   });
     // }
   }
+
+  const imgTo64Base = (img) => {
+    console.log(img);
+    handlePollPic(img);
+    setEnteredPollPic(img);
+    setUploadedPic(true);
+  };
+
+  const isImgLink = (url) => {
+    if (typeof url !== "string") {
+      return false;
+    }
+    let isImg =
+      url.match(/^http[^\?]*.(jpg|jpeg|gif|png|tiff|bmp)(\?(.*))?$/gim) ||
+      url.includes("base64");
+    return isImg;
+  };
+
+  const isValidURL = (string) => {
+    if (string === "") {
+      setValidPicture(true);
+      return true;
+    }
+    if (!isImgLink(string)) {
+      setValidPicture(false);
+      return false;
+    }
+    setValidPicture(true);
+    return true;
+  };
+
+  const handlePollPic = (e) => {
+    if (typeof e === "object") {
+      const finalPath = e.target.value;
+      setEnteredPollPic(finalPath);
+      if (!isImgLink(finalPath)) {
+        setValidPicture(false);
+        // setQuestion((prevState) => {
+        //   return {
+        //     questionName: prevState.questionName,
+        //     questionPic: finalPath,
+        //     answers: [...prevState.answers],
+        //     type: prevState.type,
+        //   };
+        // });
+        return;
+      }
+      setEnteredPollPic(finalPath);
+      // setQuestion((prevState) => {
+      //   return {
+      //     questionName: prevState.questionName,
+      //     questionPic: finalPath,
+      //     answers: [...prevState.answers],
+      //     type: prevState.type,
+      //   };
+      // });
+    } else {
+      const finalPath = e;
+      if (e === null) setEnteredPollPic(finalPath);
+      // setQuestion((prevState) => {
+      //   return {
+      //     questionName: prevState.questionName,
+      //     questionPic: finalPath,
+      //     answers: [...prevState.answers],
+      //     type: prevState.type,
+      //   };
+      // });
+    }
+  };
+
+  const handleClearPicture = () => {
+    setEnteredPollPic("");
+    setUploadedPic(!uploadedPic);
+    // document.getElementById("image-input").children.value = null;
+  };
 
   const handleCloseErrorModal = () => {
     setErrorInSignUp({
@@ -357,6 +440,30 @@ const PrePoll = (props) => {
                 value={pollName}
                 onChange={(e) => setPollName(e.target.value)}
               />
+              {!uploadedPic && (
+                <>
+                  <label>Please enter your Poll picture valid URL:</label>
+                  <TextField
+                    error={!validPicture}
+                    variant="filled"
+                    value={enteredPollPic}
+                    onChange={(e) => handlePollPic(e)}
+                    onBlur={(e) => isValidURL(e.target.value)}
+                    label="Picture"
+                    helperText={!validPicture && " URL is not Valid"}
+                  />
+                  <label>Or Upload image:</label>
+                </>
+              )}
+
+              <ImgToBase64 setImage={imgTo64Base} />
+              {uploadedPic && (
+                <>
+                  <p style={{ color: "green" }}>picture has been uploaded!</p>
+                  <button onClick={handleClearPicture}>clear Picture</button>
+                </>
+              )}
+
               <p>Press Here To Continue to set your Poll Questions:</p>
               <Button
                 variant="dark"
