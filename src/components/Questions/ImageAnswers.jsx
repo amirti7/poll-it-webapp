@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import React from "react";
 import TextField from "@mui/material/TextField";
 import ImgToBase64 from "../ImgToBase64";
+import { Button } from "react-bootstrap";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 const ImageAnswers = (props) => {
   const [question, setQuestion] = useState({
@@ -342,13 +344,18 @@ const ImageAnswers = (props) => {
   return (
     <div>
       <div>
-        <h4>Question Type: Image Answers</h4>
-        <label>Please enter your question here:</label>
+        <h4 style={{ marginBottom: "20px" }}>
+          <b>
+            Question Type: <u>Image Answers</u>
+          </b>
+        </h4>
+        <label>Please enter your question here:&ensp;</label>
         <TextField
           variant="filled"
           value={enteredQuestionName}
           onChange={(e) => handleQuestionName(e)}
           label="Question"
+          style={{ marginBottom: "20px" }}
         />
         <br />
       </div>
@@ -361,12 +368,13 @@ const ImageAnswers = (props) => {
                 <TextField
                   error={!validPicture[index]}
                   variant="filled"
-                  label="Answer"
+                  label="Valid Picture URL"
                   onBlur={(e) => handleEnteredAnswers(e, index)}
                   helperText={!validPicture[index] && " URL is not Valid"}
+                  style={{ marginBottom: "20px", marginRight: "10px" }}
                 />
               )}
-              <label>Or Upload image:</label>
+              <label>Or Upload image:&ensp;</label>
               <ImgToBase64 index={index} setImage={imgTo64Base} />
 
               {uploadedPictures[index] && (
@@ -377,11 +385,13 @@ const ImageAnswers = (props) => {
                   </button>
                 </>
               )}
-              <input
-                type="button"
-                value="Remove"
+              <Button
                 onClick={() => handleRemoveAnswer(index)}
-              />
+                variant="warning"
+                style={{ margin: "10px" }}
+              >
+                <DeleteOutlineIcon />
+              </Button>
             </div>
           );
         })}
@@ -395,8 +405,9 @@ const ImageAnswers = (props) => {
                 label="Answer"
                 value={answer}
                 onChange={(e) => handleEditAnswer(e.target.value, index)}
+                style={{ marginBottom: "20px", marginRight: "10px" }}
               />
-              <label>Or Upload image:</label>
+              <label>Or Upload image:&ensp;</label>
               <ImgToBase64 index={index} setImage={imgTo64Base} />
               {uploadedPictures[index] && (
                 <>
@@ -404,25 +415,37 @@ const ImageAnswers = (props) => {
                   <button onClick={handleClearPicture}>clear Picture</button>
                 </>
               )}
-              <input
-                type="button"
-                value="Remove"
-                onClick={() => handleRemoveEditAnswer(index)}
-              />
+              <Button
+                onClick={() => handleRemoveAnswer(index)}
+                variant="warning"
+                style={{ margin: "10px" }}
+              >
+                <DeleteOutlineIcon />
+              </Button>
             </div>
           );
         })}
       <br />
       {props.editQuestion && (
         <>
-          <br />
-          <button onClick={handleEditQuestion}>Edit Question</button>
+          <Button
+            style={{ marginBottom: "10px" }}
+            variant="success"
+            onClick={handleEditQuestion}
+          >
+            Confirm Edit Question
+          </Button>
         </>
       )}
       {!props.editQuestion && (
         <>
-          <br />
-          <button onClick={handleSubmitQuestion}>Submit Question</button>
+          <Button
+            style={{ marginBottom: "10px" }}
+            variant="success"
+            onClick={handleSubmitQuestion}
+          >
+            Submit Question
+          </Button>
         </>
       )}
     </div>

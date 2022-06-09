@@ -30,6 +30,7 @@ const ImgToBase64 = ({ setImage, index }) => {
         type="file"
         id={`img-input${index}`}
         onChange={(file) => handleFile(file)}
+        style={{ marginBottom: "20px" }}
       />
     </>
   );

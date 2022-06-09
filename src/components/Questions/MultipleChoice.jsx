@@ -4,6 +4,8 @@ import React, {
   useEffect,
   forwardRef,
 } from "react";
+import { Button } from "react-bootstrap";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 import TextField from "@mui/material/TextField";
 
@@ -138,64 +140,96 @@ const MultipleChoice = (props) => {
 
   return (
     <div>
-      <div>
-        <h4>Question Type: Multiple Choice Question</h4>
-        <label>Please enter your question here:</label>
-        <TextField
-          variant="filled"
-          value={enteredQuestionName}
-          onChange={(e) => handleQuestionName(e)}
-          label="Question"
-        />
-        <br />
-      </div>
-      {!props.editQuestion &&
-        question.answers.map((answer, index) => {
-          return (
-            <div>
-              <TextField
-                variant="filled"
-                label="Answer"
-                onBlur={(e) => handleEnteredAnswers(e, index)}
-              />
-              <input
-                type="button"
-                value="Remove"
-                onClick={() => handleRemoveAnswer(index)}
-              />
-            </div>
-          );
-        })}
-      {props.editQuestion &&
-        editableQuestion.answers.map((answer, index) => {
-          return (
-            <div>
-              <TextField
-                variant="filled"
-                label="Answer"
-                value={answer}
-                onChange={(e) => handleEditAnswer(e.target.value, index)}
-              />
-              <input
+      <form autoComplete="off">
+        <div>
+          <h4 style={{ marginBottom: "20px" }}>
+            <b>
+              Question Type: <u>Multiple Choice Question</u>
+            </b>
+          </h4>
+          <label>Please enter your question here:&ensp;</label>
+          <TextField
+            variant="filled"
+            value={enteredQuestionName}
+            onChange={(e) => handleQuestionName(e)}
+            label="Question"
+            style={{ marginBottom: "20px" }}
+          />
+          <br />
+        </div>
+        {!props.editQuestion &&
+          question.answers.map((answer, index) => {
+            return (
+              <div>
+                <TextField
+                  variant="filled"
+                  label="Answer"
+                  onBlur={(e) => handleEnteredAnswers(e, index)}
+                  style={{ marginBottom: "20px" }}
+                />
+
+                <Button
+                  onClick={() => handleRemoveAnswer(index)}
+                  variant="warning"
+                  style={{ margin: "10px" }}
+                >
+                  <DeleteOutlineIcon />
+                </Button>
+              </div>
+            );
+          })}
+        {props.editQuestion &&
+          editableQuestion.answers.map((answer, index) => {
+            return (
+              <div>
+                <TextField
+                  variant="filled"
+                  label="Answer"
+                  value={answer}
+                  onChange={(e) => handleEditAnswer(e.target.value, index)}
+                  style={{ marginBottom: "20px" }}
+                />
+                <Button
+                  onClick={() => handleRemoveEditAnswer(index)}
+                  variant="warning"
+                  style={{ margin: "10px" }}
+                >
+                  <DeleteOutlineIcon />
+                </Button>
+
+                {/* <input
                 type="button"
                 value="Remove"
                 onClick={() => handleRemoveEditAnswer(index)}
-              />
-            </div>
-          );
-        })}
-      {props.editQuestion && (
-        <>
-          <br />
-          <button onClick={handleEditQuestion}>Edit Question</button>
-        </>
-      )}
-      {!props.editQuestion && (
-        <>
-          <br />
-          <button onClick={handleSubmitQuestion}>Submit Question</button>
-        </>
-      )}
+              /> */}
+              </div>
+            );
+          })}
+        {props.editQuestion && (
+          <>
+            <br />
+            <Button
+              style={{ marginBottom: "10px" }}
+              variant="success"
+              onClick={handleEditQuestion}
+            >
+              Confirm Edit Question
+            </Button>
+          </>
+        )}
+        {!props.editQuestion && (
+          <>
+            <br />
+            <Button
+              style={{ marginBottom: "10px" }}
+              variant="success"
+              onClick={handleSubmitQuestion}
+            >
+              Submit Question
+            </Button>
+          </>
+        )}
+      </form>
     </div>
   );
 };

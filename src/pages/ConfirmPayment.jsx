@@ -336,9 +336,13 @@ const ConfirmPayment = (props) => {
               </label>
             </div>
             <div>
-              <button onClick={handlePayment}>
+              <Button
+                variant="warning"
+                style={{ border: "1px solid" }}
+                onClick={handlePayment}
+              >
                 confirm and Procced to checkout
-              </button>
+              </Button>
             </div>
             <div>
               <br />

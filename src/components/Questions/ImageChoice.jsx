@@ -3,6 +3,8 @@ import React from "react";
 import TextField from "@mui/material/TextField";
 import FileBase64 from "react-file-base64";
 import ImgToBase64 from "../ImgToBase64";
+import { Button } from "react-bootstrap";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 const ImageChoice = (props) => {
   const accessToken = localStorage.getItem("UserAccessToken");
@@ -259,88 +261,115 @@ const ImageChoice = (props) => {
 
   return (
     <div>
-      <div>
-        <h4>Question Type: Image Question</h4>
-        <label>Please enter your question here:</label>
-        <TextField
-          variant="filled"
-          value={enteredQuestionName}
-          onChange={(e) => handleQuestionName(e)}
-          label="Question"
-        />
-        <br />
-        {!uploadedPic && (
-          <>
-            <label>Please enter your question picture valid URL:</label>
-            <TextField
-              error={!validPicture}
-              variant="filled"
-              value={enteredQuestionPic}
-              onChange={(e) => handleQuestionPic(e)}
-              onBlur={(e) => isValidURL(e.target.value)}
-              label="Picture"
-              helperText={!validPicture && " URL is not Valid"}
-            />
-          </>
-        )}
-        <label>Or Upload image:</label>
-        <ImgToBase64 setImage={imgTo64Base} />
-        {uploadedPic && (
-          <>
-            <p style={{ color: "green" }}>picture has been uploaded!</p>
-            <button onClick={handleClearPicture}>clear Picture</button>
-          </>
-        )}
-      </div>
-      {!props.editQuestion &&
-        question.answers.map((answer, index) => {
-          return (
-            <div>
+      <form autoComplete="off">
+        <div>
+          <h4 style={{ marginBottom: "20px" }}>
+            <b>
+              Question Type: <u>Image Question</u>
+            </b>
+          </h4>
+          <label>Please enter your question here:&ensp;</label>
+          <TextField
+            variant="filled"
+            value={enteredQuestionName}
+            onChange={(e) => handleQuestionName(e)}
+            label="Question"
+            style={{ marginBottom: "20px" }}
+          />
+          <br />
+          {!uploadedPic && (
+            <>
+              <label>Please enter your question picture valid URL:&ensp;</label>
               <TextField
+                error={!validPicture}
                 variant="filled"
-                label="Answer"
-                onBlur={(e) => handleEnteredAnswers(e, index)}
+                value={enteredQuestionPic}
+                onChange={(e) => handleQuestionPic(e)}
+                onBlur={(e) => isValidURL(e.target.value)}
+                label="Picture"
+                helperText={!validPicture && " URL is not Valid"}
+                style={{ marginBottom: "20px" }}
               />
-              <input
-                type="button"
-                value="Remove"
-                onClick={() => handleRemoveAnswer(index)}
-              />
-            </div>
-          );
-        })}
+            </>
+          )}
+          <div>
+            <label>Or Upload image:&ensp;</label>
 
-      {props.editQuestion &&
-        editableQuestion.answers.map((answer, index) => {
-          return (
-            <div>
-              <TextField
-                variant="filled"
-                label="Answer"
-                value={answer}
-                onChange={(e) => handleEditAnswer(e.target.value, index)}
-              />
-              <input
-                type="button"
-                value="Remove"
-                onClick={() => handleRemoveEditAnswer(index)}
-              />
-            </div>
-          );
-        })}
-      <br />
-      {props.editQuestion && (
-        <>
-          <br />
-          <button onClick={handleEditQuestion}>Edit Question</button>
-        </>
-      )}
-      {!props.editQuestion && (
-        <>
-          <br />
-          <button onClick={handleSubmitQuestion}>Submit Question</button>
-        </>
-      )}
+            <ImgToBase64 setImage={imgTo64Base} />
+          </div>
+          {uploadedPic && (
+            <>
+              <p style={{ color: "green" }}>picture has been uploaded!</p>
+              <button onClick={handleClearPicture}>clear Picture</button>
+            </>
+          )}
+        </div>
+        {!props.editQuestion &&
+          question.answers.map((answer, index) => {
+            return (
+              <div>
+                <TextField
+                  variant="filled"
+                  label="Answer"
+                  onBlur={(e) => handleEnteredAnswers(e, index)}
+                  style={{ marginBottom: "20px" }}
+                />
+                <Button
+                  onClick={() => handleRemoveAnswer(index)}
+                  variant="warning"
+                  style={{ margin: "10px" }}
+                >
+                  <DeleteOutlineIcon />
+                </Button>
+              </div>
+            );
+          })}
+
+        {props.editQuestion &&
+          editableQuestion.answers.map((answer, index) => {
+            return (
+              <div>
+                <TextField
+                  variant="filled"
+                  label="Answer"
+                  value={answer}
+                  onChange={(e) => handleEditAnswer(e.target.value, index)}
+                  style={{ marginBottom: "20px" }}
+                />
+                <Button
+                  onClick={() => handleRemoveEditAnswer(index)}
+                  variant="warning"
+                  style={{ margin: "10px" }}
+                >
+                  <DeleteOutlineIcon />
+                </Button>
+              </div>
+            );
+          })}
+        <br />
+        {props.editQuestion && (
+          <>
+            <Button
+              style={{ marginBottom: "10px" }}
+              variant="success"
+              onClick={handleEditQuestion}
+            >
+              Confirm Edit Question
+            </Button>
+          </>
+        )}
+        {!props.editQuestion && (
+          <>
+            <Button
+              style={{ marginBottom: "10px" }}
+              variant="success"
+              onClick={handleSubmitQuestion}
+            >
+              Submit Question
+            </Button>
+          </>
+        )}
+      </form>
     </div>
   );
 };

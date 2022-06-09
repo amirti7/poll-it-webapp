@@ -8,6 +8,11 @@ import Button from "react-bootstrap/Button";
 import { useEffect, useState } from "react";
 import NavigationBar from "../components/NavigationBar";
 import StickyFooter from "../components/StickyFooter";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { newAccessToken } from "../components/Utils";
 
 const Box = styled.p`
@@ -408,109 +413,134 @@ const AboutUs = (props) => {
               .flat();
 
             return (
-              <div key={poll._id}>
-                <h1
-                  style={{
-                    textAlign: "center",
-                    margin: "50px 0px",
-                    textDecoration: "underline",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {poll.pollName}
-                </h1>
-                <h3>
-                  number of participants :
-                  {filterdAnswersArr.length / filterdQuestionsArr.length}
-                </h3>
-
-                {filterdQuestionsArr.map((question) => {
-                  // here will be fetch get call that brings all specific question answers from server , and then we will present
-                  // each question graph based on his answers.
-
-                  let dataForChart = [];
-                  return (
-                    <Row
-                      md={6}
-                      key={question._id}
-                      style={{ borderStyle: "solid", margin: "5px 0px" }}
+              <>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls={`${poll._id}`}
+                    id={`${poll._id}`}
+                  >
+                    <Typography> {poll.pollName}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <div key={poll._id}>
+                      {/* <h1
+                      style={{
+                        textAlign: "center",
+                        margin: "50px 0px",
+                        textDecoration: "underline",
+                        fontWeight: "bold",
+                      }}
                     >
-                      <Col md={6}>
-                        <p
-                          style={{
-                            fontSize: "40px",
-                          }}
-                        >
-                          {question.pollQuestion}
-                          {question.pollQuestionImage && (
-                            <img
-                              style={{ width: "100px" }}
-                              src={question.pollQuestionImage}
-                            ></img>
-                          )}
-                        </p>
-                        <div
-                          style={{
-                            fontSize: "20px",
-                          }}
-                        >
-                          {question.choices.map((choice) => {
-                            // const color =
-                            //   "#" +
-                            //   Math.floor(Math.random() * 16777215).toString(16);
-                            var color =
-                              colors[Math.floor(Math.random() * colors.length)];
+                      {poll.pollName}
+                    </h1> */}
+                      <h3>
+                        number of participants :
+                        {filterdAnswersArr.length / filterdQuestionsArr.length}
+                      </h3>
 
-                            choosenColors.push(color);
-                            dataForChart.push({
-                              title: choice,
-                              value: 0,
-                              color: color,
-                            });
+                      {filterdQuestionsArr.map((question) => {
+                        // here will be fetch get call that brings all specific question answers from server , and then we will present
+                        // each question graph based on his answers.
 
-                            return (
-                              <div key={choice}>
-                                <Box style={{ backgroundColor: `${color}` }} />
-                                {question.pollQuestionType !==
-                                  "Image Answers" && choice.toString()}
-                                {question.pollQuestionType ===
-                                  "Image Answers" && (
-                                  <img src={choice} style={{ width: "50px" }} />
+                        let dataForChart = [];
+                        return (
+                          <Row
+                            md={6}
+                            key={question._id}
+                            style={{
+                              borderStyle: "solid",
+                              margin: "5px 0px",
+                            }}
+                          >
+                            <Col md={6}>
+                              <p
+                                style={{
+                                  fontSize: "40px",
+                                }}
+                              >
+                                {question.pollQuestion}
+                                {question.pollQuestionImage && (
+                                  <img
+                                    style={{ width: "250px" }}
+                                    src={question.pollQuestionImage}
+                                  ></img>
                                 )}
+                              </p>
+                              <div
+                                style={{
+                                  fontSize: "20px",
+                                }}
+                              >
+                                {question.choices.map((choice) => {
+                                  // const color =
+                                  //   "#" +
+                                  //   Math.floor(Math.random() * 16777215).toString(16);
+                                  var color =
+                                    colors[
+                                      Math.floor(Math.random() * colors.length)
+                                    ];
 
-                                <br />
+                                  choosenColors.push(color);
+                                  dataForChart.push({
+                                    title: choice,
+                                    value: 0,
+                                    color: color,
+                                  });
+
+                                  return (
+                                    <div key={choice}>
+                                      <Box
+                                        style={{
+                                          backgroundColor: `${color}`,
+                                        }}
+                                      />
+                                      {question.pollQuestionType !==
+                                        "Image Answers" && choice.toString()}
+                                      {question.pollQuestionType ===
+                                        "Image Answers" && (
+                                        <img
+                                          src={choice}
+                                          style={{ width: "250px" }}
+                                        />
+                                      )}
+
+                                      <br />
+                                    </div>
+                                  );
+                                })}
+                                {filterdAnswersArr.forEach((ans) => {
+                                  dataForChart.forEach((choice) => {
+                                    if (ans.answer === choice.title) {
+                                      choice.value = choice.value + 1;
+                                    }
+                                  });
+                                })}
                               </div>
-                            );
-                          })}
-                          {filterdAnswersArr.forEach((ans) => {
-                            dataForChart.forEach((choice) => {
-                              if (ans.answer === choice.title) {
-                                choice.value = choice.value + 1;
-                              }
-                            });
-                          })}
-                        </div>
-                      </Col>
-                      <Col md={6}>
-                        <PieChart
-                          radius={30}
-                          segmentsShift={1}
-                          label={({ dataEntry }) => {
-                            var fixedNum =
-                              Math.round(dataEntry.percentage) + "%";
-                            if (fixedNum == "0%") return null;
-                            return fixedNum;
-                          }}
-                          labelStyle={{
-                            ...defaultLabelStyle,
-                          }}
-                          data={dataForChart}
-                        />
-                      </Col>
-                    </Row>
-                  );
-                })}
-              </div>
+                            </Col>
+                            <Col md={6}>
+                              <PieChart
+                                radius={30}
+                                segmentsShift={1}
+                                label={({ dataEntry }) => {
+                                  var fixedNum =
+                                    Math.round(dataEntry.percentage) + "%";
+                                  if (fixedNum == "0%") return null;
+                                  return fixedNum;
+                                }}
+                                labelStyle={{
+                                  ...defaultLabelStyle,
+                                }}
+                                data={dataForChart}
+                              />
+                            </Col>
+                          </Row>
+                        );
+                      })}
+                    </div>
+                  </AccordionDetails>
+                </Accordion>
+              </>
             );
           })}
       </Container>

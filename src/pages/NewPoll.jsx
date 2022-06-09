@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import SyncLoader from "react-spinners/SyncLoader";
 import styled from "styled-components";
 import PollItLogo from "../assets/images/Logo.png";
+import AddIcon from "@mui/icons-material/Add";
 
 const Title = styled.p`
   font-size: 80px;
@@ -172,7 +173,7 @@ const NewPoll = (props) => {
   }
 
   return (
-    <div>
+    <div className="border">
       <Modal
         open={loading}
         aria-labelledby="modal-modal-title"
@@ -198,7 +199,9 @@ const NewPoll = (props) => {
                 }}
               >
                 Before We Submit Your Entered Poll , please fill in your Poll
-                Questions: you have 3 poll options (regular multiple Questions , question with image , answers with images), mix them as you wish and have fun!
+                Questions: you have 3 poll options (regular multiple Questions ,
+                question with image , answers with images), mix them as you wish
+                and have fun!
               </p>
             </Col>
             <Col md={6}>
@@ -210,10 +213,15 @@ const NewPoll = (props) => {
             {console.log(finishedQuestions)}
             {finishedQuestions.questions.map((question, index) => {
               return (
-                <div>
+                <div
+                  style={{
+                    marginBottom: "20px",
+                  }}
+                >
                   <Button
                     onClick={() => handleEditQuestion(question, index)}
-                    variant="dark"
+                    variant="secondary"
+                    style={{ borderRadius: "20px" }}
                   >
                     {question.questionName}
                   </Button>
@@ -222,11 +230,20 @@ const NewPoll = (props) => {
             })}
           </div>
           <Row md={6}>
-            <Col md={6}>
+            <Col
+              md={6}
+              style={{
+                backgroundColor: `${
+                  questionToDisplay || clickedOnEditQuestions
+                    ? "WhiteSmoke"
+                    : ""
+                }`,
+              }}
+            >
               <div>
-                <Dropdown>
+                <Dropdown style={{ marginBottom: "10px" }}>
                   <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    Question Type:
+                    <AddIcon />
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu>

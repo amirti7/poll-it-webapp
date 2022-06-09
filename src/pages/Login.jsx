@@ -218,66 +218,68 @@ const LoginPage = (props) => {
             <Image src={PollItLogo}></Image>
           </Col>
           <Col md={6}>
-            <Title>Login</Title>
-            <p
-              style={{
-                fontSize: "20px",
-              }}
-            >
-              Lets Start Our Experience Together!
-            </p>
-            <p>Email:</p>
-            <Input
-              type="text"
-              name="email"
-              value={userEmail}
-              onChange={(e) => handleEnteredEmail(e)}
-            />
-            <p>Password:</p>
-            <Input
-              type="password"
-              name="password"
-              value={userPassword}
-              onChange={(e) => handleEnteredPassword(e)}
-            />
-
-            <br></br>
-            <Button
-              variant="dark"
-              style={{ width: "300px" }}
-              onClick={(e) => handleLogin(e)}
-            >
-              Login
-            </Button>
-            <p style={{ marginTop: "20px" }}>
-              You are Not a Member Yet?
-              <Button
-                variant="outline-dark"
-                style={{ width: "155px" }}
-                href="/signup"
+            <form autoComplete="off">
+              <Title>Login</Title>
+              <p
+                style={{
+                  fontSize: "20px",
+                }}
               >
-                Sign-Up
-              </Button>
-            </p>
-            <div class="container" style={{ borderRaduis: "8px" }}>
-              <FacebookLogin
-                appId="1202513657162406"
-                autoLoad={false}
-                fields="name,email,picture"
-                scope="public_profile,user_friends,email"
-                callback={responseFacebook}
-                icon="fa-facebook"
-                render={(renderProps) => (
-                  <FacebookLoginButton
-                    onClick={renderProps.onClick}
-                    style={{
-                      width: "190px",
-                      paddingLeft: "10px",
-                    }}
-                  />
-                )}
+                Lets Start Our Experience Together!
+              </p>
+              <p>Email:</p>
+              <Input
+                type="text"
+                name="email"
+                value={userEmail}
+                onChange={(e) => handleEnteredEmail(e)}
               />
-            </div>
+              <p>Password:</p>
+              <Input
+                type="password"
+                name="password"
+                value={userPassword}
+                onChange={(e) => handleEnteredPassword(e)}
+              />
+
+              <br></br>
+              <Button
+                variant="dark"
+                style={{ width: "300px" }}
+                onClick={(e) => handleLogin(e)}
+              >
+                Login
+              </Button>
+              <p style={{ marginTop: "20px" }}>
+                You are Not a Member Yet?
+                <Button
+                  variant="outline-dark"
+                  style={{ width: "155px" }}
+                  href="/signup"
+                >
+                  Sign-Up
+                </Button>
+              </p>
+              <div class="container" style={{ borderRaduis: "8px" }}>
+                <FacebookLogin
+                  appId="1202513657162406"
+                  autoLoad={false}
+                  fields="name,email,picture"
+                  scope="public_profile,user_friends,email"
+                  callback={responseFacebook}
+                  icon="fa-facebook"
+                  render={(renderProps) => (
+                    <FacebookLoginButton
+                      onClick={renderProps.onClick}
+                      style={{
+                        width: "190px",
+                        paddingLeft: "10px",
+                      }}
+                    />
+                  )}
+                />
+              </div>
+            </form>
           </Col>
         </Row>
       </Container>

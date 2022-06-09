@@ -115,13 +115,13 @@ const permanentJobData = [
   { label: "No", value: "No" },
 ];
 const PrePoll = (props) => {
-  const [educationLevel, setEducationLevel] = useState([]);
-  const [gender, setGender] = useState([]);
-  const [ageRange, setAgeRange] = useState([]);
-  const [maritalStatus, setMaritalStatus] = useState([]);
-  const [numOfKids, setNumOfKids] = useState([]);
-  const [income, setIncome] = useState([]);
-  const [permanentJob, setPermanentJob] = useState([]);
+  const [educationLevel, setEducationLevel] = useState(educationLevelData);
+  const [gender, setGender] = useState(genderData);
+  const [ageRange, setAgeRange] = useState(ageRangeData);
+  const [maritalStatus, setMaritalStatus] = useState(maritalStatusData);
+  const [numOfKids, setNumOfKids] = useState(numOfKidsData);
+  const [income, setIncome] = useState(incomeData);
+  const [permanentJob, setPermanentJob] = useState(permanentJobData);
   const [pollName, setPollName] = useState("");
   const [loading, setLoading] = useState(false);
   const [validPicture, setValidPicture] = useState(true);
@@ -384,7 +384,7 @@ const PrePoll = (props) => {
           </Col>
         </Row>
 
-        <form>
+        <form autoComplete="off">
           <Row md={6}>
             <Col md={4}>
               <p>select your survey participants background:</p>
@@ -393,13 +393,17 @@ const PrePoll = (props) => {
                 value={educationLevel}
                 onChange={setEducationLevel}
               />
-              <p>select your survey participants gender :</p>
+              <p style={{ marginTop: "16px" }}>
+                select your survey participants gender :
+              </p>
               <MultiSelect
                 options={genderData}
                 value={gender}
                 onChange={setGender}
               />
-              <p>select your survey participants age range :</p>
+              <p style={{ marginTop: "16px" }}>
+                select your survey participants age range :
+              </p>
               <MultiSelect
                 options={ageRangeData}
                 value={ageRange}
@@ -413,13 +417,17 @@ const PrePoll = (props) => {
                 value={maritalStatus}
                 onChange={setMaritalStatus}
               />
-              <p>select your survey participants number of childrens :</p>
+              <p style={{ marginTop: "16px" }}>
+                select your survey participants number of childrens :
+              </p>
               <MultiSelect
                 options={numOfKidsData}
                 value={numOfKids}
                 onChange={setNumOfKids}
               />
-              <p>select your survey participants income :</p>
+              <p style={{ marginTop: "16px" }}>
+                select your survey participants income :
+              </p>
               <MultiSelect
                 options={incomeData}
                 value={income}
@@ -433,7 +441,7 @@ const PrePoll = (props) => {
                 value={permanentJob}
                 onChange={setPermanentJob}
               />
-              <p>Please Enter Your Poll Name:</p>
+              <p style={{ marginTop: "16px" }}>Please Enter Your Poll Name:</p>
               <Input
                 type="text"
                 name="name"
@@ -442,7 +450,10 @@ const PrePoll = (props) => {
               />
               {!uploadedPic && (
                 <>
-                  <label>Please enter your Poll picture valid URL:</label>
+                  <label style={{ marginTop: "16px" }}>
+                    Please enter your Poll picture via valid URL or Upload
+                    Picture:
+                  </label>
                   <TextField
                     error={!validPicture}
                     variant="filled"
@@ -452,10 +463,8 @@ const PrePoll = (props) => {
                     label="Picture"
                     helperText={!validPicture && " URL is not Valid"}
                   />
-                  <label>Or Upload image:</label>
                 </>
               )}
-
               <ImgToBase64 setImage={imgTo64Base} />
               {uploadedPic && (
                 <>
@@ -464,7 +473,9 @@ const PrePoll = (props) => {
                 </>
               )}
 
-              <p>Press Here To Continue to set your Poll Questions:</p>
+              <p style={{ marginTop: "16px" }}>
+                Press Here To Continue to set your Poll Questions:
+              </p>
               <Button
                 variant="dark"
                 onClick={handlePrePollRegister}

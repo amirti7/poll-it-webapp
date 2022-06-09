@@ -6,6 +6,7 @@ import {
   formatExpirationDate,
   formatFormData,
 } from "./Utils";
+import { Button } from "react-bootstrap";
 
 import "react-credit-cards/es/styles-compiled.css";
 
@@ -129,7 +130,13 @@ export default class App extends React.Component {
             <input type="hidden" name="issuer" value={issuer} />
             <p></p>
             <div className="form-actions">
-              <button onClick={this.props.onClickPay}>PAY</button>
+              <Button
+                variant="warning"
+                style={{ border: "1px solid" }}
+                onClick={this.props.onClickPay}
+              >
+                PAY
+              </Button>
             </div>
           </form>
         </div>
