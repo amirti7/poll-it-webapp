@@ -257,7 +257,6 @@ const ImageAnswers = (props) => {
       updatedLoadedPictures.splice(index, 1, false);
       return updatedLoadedPictures;
     });
-    // document.getElementById(`image-input${index}`).children.value = null;
   };
 
   const handleSubmitQuestion = () => {
@@ -356,6 +355,7 @@ const ImageAnswers = (props) => {
           onChange={(e) => handleQuestionName(e)}
           label="Question"
           style={{ marginBottom: "20px" }}
+          inputProps={{ maxLength: 68 }}
         />
         <br />
       </div>
@@ -364,27 +364,15 @@ const ImageAnswers = (props) => {
         question.answers.map((answer, index) => {
           return (
             <div>
-              {!uploadedPictures[index] && (
-                <TextField
-                  error={!validPicture[index]}
-                  variant="filled"
-                  label="Valid Picture URL"
-                  onBlur={(e) => handleEnteredAnswers(e, index)}
-                  helperText={!validPicture[index] && " URL is not Valid"}
-                  style={{ marginBottom: "20px", marginRight: "10px" }}
-                />
-              )}
-              <label>Or Upload image:&ensp;</label>
-              <ImgToBase64 index={index} setImage={imgTo64Base} />
+              <TextField
+                error={!validPicture[index]}
+                variant="filled"
+                label="Valid Picture URL"
+                onBlur={(e) => handleEnteredAnswers(e, index)}
+                helperText={!validPicture[index] && " URL is not Valid"}
+                style={{ marginBottom: "20px", marginRight: "10px" }}
+              />
 
-              {uploadedPictures[index] && (
-                <>
-                  <p style={{ color: "green" }}>picture has been uploaded!</p>
-                  <button onClick={() => handleClearPicture(index)}>
-                    clear Picture
-                  </button>
-                </>
-              )}
               <Button
                 onClick={() => handleRemoveAnswer(index)}
                 variant="warning"
@@ -407,16 +395,8 @@ const ImageAnswers = (props) => {
                 onChange={(e) => handleEditAnswer(e.target.value, index)}
                 style={{ marginBottom: "20px", marginRight: "10px" }}
               />
-              <label>Or Upload image:&ensp;</label>
-              <ImgToBase64 index={index} setImage={imgTo64Base} />
-              {uploadedPictures[index] && (
-                <>
-                  <p style={{ color: "green" }}>picture has been uploaded!</p>
-                  <button onClick={handleClearPicture}>clear Picture</button>
-                </>
-              )}
               <Button
-                onClick={() => handleRemoveAnswer(index)}
+                onClick={() => handleRemoveEditAnswer(index)}
                 variant="warning"
                 style={{ margin: "10px" }}
               >

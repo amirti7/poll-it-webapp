@@ -275,34 +275,20 @@ const ImageChoice = (props) => {
             onChange={(e) => handleQuestionName(e)}
             label="Question"
             style={{ marginBottom: "20px" }}
+            inputProps={{ maxLength: 68 }}
           />
           <br />
-          {!uploadedPic && (
-            <>
-              <label>Please enter your question picture valid URL:&ensp;</label>
-              <TextField
-                error={!validPicture}
-                variant="filled"
-                value={enteredQuestionPic}
-                onChange={(e) => handleQuestionPic(e)}
-                onBlur={(e) => isValidURL(e.target.value)}
-                label="Picture"
-                helperText={!validPicture && " URL is not Valid"}
-                style={{ marginBottom: "20px" }}
-              />
-            </>
-          )}
-          <div>
-            <label>Or Upload image:&ensp;</label>
-
-            <ImgToBase64 setImage={imgTo64Base} />
-          </div>
-          {uploadedPic && (
-            <>
-              <p style={{ color: "green" }}>picture has been uploaded!</p>
-              <button onClick={handleClearPicture}>clear Picture</button>
-            </>
-          )}
+          <label>Please enter your question picture valid URL:&ensp;</label>
+          <TextField
+            error={!validPicture}
+            variant="filled"
+            value={enteredQuestionPic}
+            onChange={(e) => handleQuestionPic(e)}
+            onBlur={(e) => isValidURL(e.target.value)}
+            label="Picture"
+            helperText={!validPicture && " URL is not Valid"}
+            style={{ marginBottom: "20px" }}
+          />
         </div>
         {!props.editQuestion &&
           question.answers.map((answer, index) => {
@@ -313,6 +299,7 @@ const ImageChoice = (props) => {
                   label="Answer"
                   onBlur={(e) => handleEnteredAnswers(e, index)}
                   style={{ marginBottom: "20px" }}
+                  inputProps={{ maxLength: 45 }}
                 />
                 <Button
                   onClick={() => handleRemoveAnswer(index)}
@@ -335,6 +322,7 @@ const ImageChoice = (props) => {
                   value={answer}
                   onChange={(e) => handleEditAnswer(e.target.value, index)}
                   style={{ marginBottom: "20px" }}
+                  inputProps={{ maxLength: 45 }}
                 />
                 <Button
                   onClick={() => handleRemoveEditAnswer(index)}

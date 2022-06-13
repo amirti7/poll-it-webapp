@@ -33,7 +33,7 @@ const Title = styled.p`
 
 const ConfirmPayment = (props) => {
   const location = useLocation();
-  const updatedPoll = location.state.poll;
+  let updatedPoll = location.state.poll;
   let prePollToGet = JSON.parse(location.state.prePoll);
   // const prePoll = location.state.prePoll;
   let imgQuestion = null;
@@ -57,12 +57,29 @@ const ConfirmPayment = (props) => {
   }, []);
 
   const handleDonePayment = async () => {
-    debugger;
     Object.assign(prePollToGet, {
       coins: coinsPerUser,
       maxUsers: enteredAmountOfAccounts,
     });
     console.log(prePollToGet);
+    if (prePollToGet.image.includes("base64")) {
+      const imageData = {
+        file: prePollToGet.image,
+      };
+      const json = JSON.stringify(imageData);
+      const data = await fetch("https://poll-it.cs.colman.ac.il/uploadBase64", {
+        method: "POST",
+        body: json,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: auth,
+        },
+      });
+      console.log(data);
+      const pollImg = await data.json();
+      prePollToGet["image"] = pollImg.url;
+      console.log(prePollToGet);
+    }
 
     const json = JSON.stringify(prePollToGet);
     console.log(json);
@@ -76,60 +93,57 @@ const ConfirmPayment = (props) => {
       },
     });
 
-    //new access token
+    // //new access token
 
-    console.log(data);
     const pollId = await data.json();
 
-    updatedPoll.questions.forEach((question) => {
-      console.log(question);
-      if (question.type === "Image Question") {
-        const data = question.questionPic;
-
-        if (question.questionPic.includes("base64")) {
-          const imageData = {
-            file: question.questionPic,
-          };
-          const json = JSON.stringify(imageData);
-          fetch("https://poll-it.cs.colman.ac.il/uploadBase64", {
-            method: "POST",
-            body: json,
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: auth,
-            },
-          })
-            .then((response) => {
-              response.json();
-            })
-            .then((data) => {
-              console.log("data", data);
-              imgQuestion = data;
-            });
-        }
-      } else if (question.type === "Image Answers") {
-        let imgUrl;
-        question.answers.map((answer) => {
-          if (answer.includes("base64")) {
-            const imageData = {
-              file: answer,
-            };
-            const json = JSON.stringify(imageData);
-            fetch("https://poll-it.cs.colman.ac.il/uploadBase64", {
-              method: "POST",
-              body: json,
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: auth,
-              },
-            })
-              .then((response) => {
-                response.json();
-              })
-              .then((data) => console.log(data));
-          }
-        });
-      }
+    updatedPoll.questions.forEach(async (question) => {
+      // console.log(question);
+      // if (question.type === "Image Question") {
+      //   if (question.questionPic.includes("base64")) {
+      //     const imageData = {
+      //       file: question.questionPic,
+      //     };
+      //     const json = JSON.stringify(imageData);
+      //     const data = await fetch(
+      //       "https://poll-it.cs.colman.ac.il/uploadBase64",
+      //       {
+      //         method: "POST",
+      //         body: json,
+      //         headers: {
+      //           "Content-Type": "application/json",
+      //           Authorization: auth,
+      //         },
+      //       }
+      //     );
+      //     console.log(data);
+      //     const questionImg = await data.json();
+      //     question["questionPic"] = questionImg.url;
+      //   }
+      // } else if (question.type === "Image Answers") {
+      //   question.answers.forEach(async (answer, index) => {
+      //     if (answer.includes("base64")) {
+      //       const imageData = {
+      //         file: answer,
+      //       };
+      //       const json = JSON.stringify(imageData);
+      //       const data = await fetch(
+      //         "https://poll-it.cs.colman.ac.il/uploadBase64",
+      //         {
+      //           method: "POST",
+      //           body: json,
+      //           headers: {
+      //             "Content-Type": "application/json",
+      //             Authorization: auth,
+      //           },
+      //         }
+      //       );
+      //       console.log(data);
+      //       const ansImg = await data.json();
+      //       question.answers[index] = ansImg.url;
+      //     }
+      //   });
+      // }
       let data;
       if (imgQuestion != null) {
         data = {

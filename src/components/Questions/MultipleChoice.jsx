@@ -154,6 +154,7 @@ const MultipleChoice = (props) => {
             onChange={(e) => handleQuestionName(e)}
             label="Question"
             style={{ marginBottom: "20px" }}
+            inputProps={{ maxLength: 68 }}
           />
           <br />
         </div>
@@ -166,6 +167,7 @@ const MultipleChoice = (props) => {
                   label="Answer"
                   onBlur={(e) => handleEnteredAnswers(e, index)}
                   style={{ marginBottom: "20px" }}
+                  inputProps={{ maxLength: 45 }}
                 />
 
                 <Button
@@ -188,6 +190,7 @@ const MultipleChoice = (props) => {
                   value={answer}
                   onChange={(e) => handleEditAnswer(e.target.value, index)}
                   style={{ marginBottom: "20px" }}
+                  inputProps={{ maxLength: 45 }}
                 />
                 <Button
                   onClick={() => handleRemoveEditAnswer(index)}

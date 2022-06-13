@@ -5,7 +5,6 @@ import StickyFooter from "../components/StickyFooter";
 import Dropdown from "react-bootstrap/Dropdown";
 import MultipleChoice from "../components/Questions/MultipleChoice";
 import ImageChoice from "../components/Questions/ImageChoice";
-import Range from "../components/Questions/Range";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import ImageAnswers from "../components/Questions/ImageAnswers";
 import Modal from "@mui/material/Modal";
@@ -313,66 +312,6 @@ const NewPoll = (props) => {
           </Row>
         </Container>
       </div>
-      {/* <div style={{ marginTop: "10px" }}>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Question Type:
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu>
-            <Dropdown.Item onClick={() => setQuestionToDisplay("multiple")}>
-              Multiple answers-one choice
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => setQuestionToDisplay("image")}>
-              Image Question
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => setQuestionToDisplay("ImageAnswers")}>
-              Image Answers
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        {questionToDisplay === "multiple" && (
-          <MultipleChoice onSubmitQuestion={handleFinishedQuestions} />
-        )}
-        {questionToDisplay === "image" && (
-          <ImageChoice onSubmitQuestion={handleFinishedQuestions} />
-        )}
-        {questionToDisplay === "ImageAnswers" && (
-          <ImageAnswers onSubmitQuestion={handleFinishedQuestions} />
-        )}
-        {clickedOnEditQuestions && editQuestionType === "Multi Choice" && (
-          <MultipleChoice
-            onFinishEditQuestion={handleFinishedEditedQuestion}
-            editQuestion={questionToEdit}
-            question={questionToEdit}
-          />
-        )}
-        {clickedOnEditQuestions && editQuestionType === "Image Question" && (
-          <ImageChoice
-            onFinishEditQuestion={handleFinishedEditedQuestion}
-            editQuestion={questionToEdit}
-            question={questionToEdit}
-          />
-        )}
-        {clickedOnEditQuestions && editQuestionType === "Image Answers" && (
-          <ImageAnswers
-            onFinishEditQuestion={handleFinishedEditedQuestion}
-            editQuestion={questionToEdit}
-            question={questionToEdit}
-          />
-        )}
-      </div>
-      <Button onClick={handleSubmitPoll}>Submit Poll</Button>
-      <Button
-        variant="dark"
-        style={{ marginLeft: "5px" }}
-        onClick={() => {
-          setQuestionToDisplay("");
-          setClickedOnEditQuestions(false);
-        }}
-      >
-        Cancel
-      </Button> */}
       <StickyFooter />
     </div>
   );

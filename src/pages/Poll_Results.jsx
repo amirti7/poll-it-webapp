@@ -42,9 +42,6 @@ const colors = [
   "#E57373",
   "#EF5350",
   "#F44336",
-  "#E53935",
-  "#D32F2F",
-  "#C62828",
   "#B71C1C",
   "#FF8A80",
   "#FF5252",
@@ -87,7 +84,6 @@ const colors = [
   "#5E35B1",
   "#512DA8",
   "#4527A0",
-  "#311B92",
   "#B388FF",
   "#7C4DFF",
   "#651FFF",
@@ -101,7 +97,6 @@ const colors = [
   "#3949AB",
   "#303F9F",
   "#283593",
-  "#1A237E",
   "#8C9EFF",
   "#536DFE",
   "#3D5AFE",
@@ -112,20 +107,14 @@ const colors = [
   "#64B5F6",
   "#42A5F5",
   "#2196F3",
-  "#1E88E5",
-  "#1976D2",
-  "#1565C0",
   "#0D47A1",
   "#82B1FF",
   "#448AFF",
-  "#2979FF",
   "#2962FF",
   "#03A9F4",
   "#B3E5FC",
   "#81D4FA",
   "#4FC3F7",
-  "#29B6F6",
-  "#03A9F4",
   "#039BE5",
   "#0288D1",
   "#0277BD",
@@ -191,7 +180,6 @@ const colors = [
   "#64DD17",
   "#CDDC39",
   "#F0F4C3",
-  "#E6EE9C",
   "#DCE775",
   "#D4E157",
   "#CDDC39",
@@ -207,21 +195,18 @@ const colors = [
   "#FFF9C4",
   "#FFF59D",
   "#FFF176",
-  "#FFEE58",
   "#FFEB3B",
   "#FDD835",
   "#FBC02D",
   "#F9A825",
   "#F57F17",
   "#FFFF8D",
-  "#FFFF00",
   "#FFEA00",
   "#FFD600",
   "#FFC107",
   "#FFECB3",
   "#FFE082",
   "#FFD54F",
-  "#FFCA28",
   "#FFC107",
   "#FFB300",
   "#FFA000",
@@ -236,9 +221,7 @@ const colors = [
   "#FFCC80",
   "#FFB74D",
   "#FFA726",
-  "#FF9800",
   "#FB8C00",
-  "#F57C00",
   "#EF6C00",
   "#E65100",
   "#FFD180",
@@ -251,14 +234,10 @@ const colors = [
   "#FF8A65",
   "#FF7043",
   "#FF5722",
-  "#F4511E",
-  "#E64A19",
-  "#D84315",
   "#BF360C",
   "#FF9E80",
   "#FF6E40",
   "#FF3D00",
-  "#DD2C00",
   "#795548",
   "#EFEBE9",
   "#D7CCC8",
@@ -266,27 +245,16 @@ const colors = [
   "#A1887F",
   "#8D6E63",
   "#795548",
-  "#6D4C41",
-  "#5D4037",
-  "#4E342E",
-  "#3E2723",
   "#9E9E9E",
   "#E0E0E0",
   "#BDBDBD",
-  "#9E9E9E",
-  "#757575",
   "#616161",
   "#424242",
   "#607D8B",
   "#B0BEC5",
   "#90A4AE",
   "#78909C",
-  "#607D8B",
-  "#546E7A",
-  "#455A64",
   "#37474F",
-  "#263238",
-  "#000000",
 ];
 
 let choosenColors = [];
@@ -299,10 +267,14 @@ const AboutUs = (props) => {
   const userID = localStorage.getItem("UserId");
   let UserAccessToken = localStorage.getItem("UserAccessToken");
   let auth = "Bearer " + UserAccessToken;
+  const [picU, setpicU] = useState();
   const pic = true;
+  let link;
+  let url;
   let resData, pollsDetails, formatPolls;
   let polls, pollQuestions, answers;
   let pollsShow;
+  let picUrl;
 
   async function getData() {
     const pollsData = await fetch(
@@ -339,7 +311,7 @@ const AboutUs = (props) => {
         }
       );
 
-      const pollQuestionDetails = await pollQuestionData.json();
+      let pollQuestionDetails = await pollQuestionData.json();
       const formatPollQuestions = pollQuestionDetails.map((question) => {
         const obj = {
           _id: question._id,
@@ -351,6 +323,7 @@ const AboutUs = (props) => {
         };
         return obj;
       });
+
       setUserPollQuestions((prevQuestions) => {
         prevQuestions.push(formatPollQuestions);
         return [...prevQuestions];
@@ -460,9 +433,22 @@ const AboutUs = (props) => {
                                 }}
                               >
                                 {question.pollQuestion}
+                                {/* {question.pollQuestionType ===
+                                  "Image Question" &&
+                                  question.pollQuestionImage.includes(
+                                    "poll-it.cs.colman.ac.il"
+                                  ) && {handleBadPic}
+
+                                  } */}
                                 {question.pollQuestionImage && (
                                   <img
-                                    style={{ width: "250px" }}
+                                    style={{
+                                      width: "250px",
+                                      height: "200px",
+                                      borderRadius: "10px",
+                                      marginLeft: "10px",
+                                      marginTop: "5px",
+                                    }}
                                     src={question.pollQuestionImage}
                                   ></img>
                                 )}
@@ -501,7 +487,12 @@ const AboutUs = (props) => {
                                         "Image Answers" && (
                                         <img
                                           src={choice}
-                                          style={{ width: "250px" }}
+                                          style={{
+                                            width: "250px",
+                                            height: "200px",
+                                            borderRadius: "10px",
+                                            marginBottom: "5px",
+                                          }}
                                         />
                                       )}
 

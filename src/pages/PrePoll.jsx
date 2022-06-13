@@ -59,8 +59,6 @@ const style = {
 };
 
 const educationLevelData = [
-  { label: "Pre-School", value: "Preschool" },
-  { label: "Elementary", value: "Elementary" },
   { label: "Middle School", value: "Middle School" },
   { label: "High School", value: "High School" },
   { label: "During Bachelor's", value: "During Bachelors" },
@@ -160,8 +158,7 @@ const PrePoll = (props) => {
       numOfKids.length === 0 ||
       income.length === 0 ||
       permanentJob.length === 0 ||
-      pollName.trim() === "" ||
-      enteredPollPic === ""
+      pollName.trim() === ""
     ) {
       setErrorInSignUp({
         isOpen: true,
