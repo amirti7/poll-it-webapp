@@ -340,6 +340,10 @@ const ImageAnswers = (props) => {
     }
   };
 
+  const handleDeleteQuestion = () => {
+    props.onDeleteQuestion();
+  };
+
   return (
     <div>
       <div>
@@ -414,6 +418,13 @@ const ImageAnswers = (props) => {
             onClick={handleEditQuestion}
           >
             Confirm Edit Question
+          </Button>
+          <Button
+            style={{ marginBottom: "10px", marginLeft: "10px" }}
+            variant="danger"
+            onClick={handleDeleteQuestion}
+          >
+            Delete Question
           </Button>
         </>
       )}

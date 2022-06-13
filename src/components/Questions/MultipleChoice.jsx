@@ -130,12 +130,18 @@ const MultipleChoice = (props) => {
   };
 
   const handleEditQuestion = () => {
+    if (editableQuestion.answers.includes("")) return;
     console.log(editableQuestion);
     props.onFinishEditQuestion(editableQuestion);
   };
 
   const handleSubmitQuestion = () => {
+    if (question.answers.includes("")) return;
     props.onSubmitQuestion(question);
+  };
+
+  const handleDeleteQuestion = () => {
+    props.onDeleteQuestion();
   };
 
   return (
@@ -217,6 +223,13 @@ const MultipleChoice = (props) => {
               onClick={handleEditQuestion}
             >
               Confirm Edit Question
+            </Button>
+            <Button
+              style={{ marginBottom: "10px", marginLeft: "10px" }}
+              variant="danger"
+              onClick={handleDeleteQuestion}
+            >
+              Delete Question
             </Button>
           </>
         )}

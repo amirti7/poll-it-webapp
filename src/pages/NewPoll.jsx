@@ -96,6 +96,18 @@ const NewPoll = (props) => {
     });
   };
 
+  const handleDeleteQuestion = () => {
+    setFinishedQuestions((prevState) => {
+      let updatedQuestions = [...prevState.questions];
+      updatedQuestions.splice(editQuestionIndex, 1);
+      return {
+        questions: updatedQuestions,
+      };
+    });
+    setClickedOnEditQuestions(false);
+    setQuestionToDisplay("");
+  };
+
   const handleFinishedEditedQuestion = (question) => {
     setFinishedQuestions((prevState) => {
       let updatedQuestions = [...prevState.questions];
@@ -110,6 +122,7 @@ const NewPoll = (props) => {
   };
 
   async function handleSubmitPoll() {
+    if (finishedQuestions.questions.length === 0) return;
     let updatedPoll;
     let finalQuestions = finishedQuestions.questions;
     updatedPoll = {
@@ -276,6 +289,7 @@ const NewPoll = (props) => {
                   editQuestionType === "Multi Choice" && (
                     <MultipleChoice
                       onFinishEditQuestion={handleFinishedEditedQuestion}
+                      onDeleteQuestion={handleDeleteQuestion}
                       editQuestion={questionToEdit}
                       question={questionToEdit}
                     />
@@ -284,6 +298,7 @@ const NewPoll = (props) => {
                   editQuestionType === "Image Question" && (
                     <ImageChoice
                       onFinishEditQuestion={handleFinishedEditedQuestion}
+                      onDeleteQuestion={handleDeleteQuestion}
                       editQuestion={questionToEdit}
                       question={questionToEdit}
                     />
@@ -292,6 +307,7 @@ const NewPoll = (props) => {
                   editQuestionType === "Image Answers" && (
                     <ImageAnswers
                       onFinishEditQuestion={handleFinishedEditedQuestion}
+                      onDeleteQuestion={handleDeleteQuestion}
                       editQuestion={questionToEdit}
                       question={questionToEdit}
                     />

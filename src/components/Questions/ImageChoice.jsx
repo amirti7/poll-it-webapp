@@ -72,7 +72,8 @@ const ImageChoice = (props) => {
     if (
       !validPicture ||
       enteredQuestionPic === "" ||
-      enteredQuestionName === ""
+      enteredQuestionName === "" ||
+      editableQuestion.answers.includes("")
     ) {
       return;
     }
@@ -251,12 +252,16 @@ const ImageChoice = (props) => {
     if (
       !validPicture ||
       enteredQuestionPic === "" ||
-      enteredQuestionName === ""
+      enteredQuestionName === "" ||
+      question.answers.includes("")
     ) {
       return;
     }
     console.log(question);
     props.onSubmitQuestion(question);
+  };
+  const handleDeleteQuestion = () => {
+    props.onDeleteQuestion();
   };
 
   return (
@@ -343,6 +348,13 @@ const ImageChoice = (props) => {
               onClick={handleEditQuestion}
             >
               Confirm Edit Question
+            </Button>
+            <Button
+              style={{ marginBottom: "10px", marginLeft: "10px" }}
+              variant="danger"
+              onClick={handleDeleteQuestion}
+            >
+              Delete Question
             </Button>
           </>
         )}
